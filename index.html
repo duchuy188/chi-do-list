@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Mali:ital,wght@0,500;0,600;0,700;1,500&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=cow3" />
+  <link rel="stylesheet" href="styles.css?v=frog1" />
 </head>
 <body class="theme-day">
   <div class="room-scene" id="room-scene">
@@ -25,7 +25,7 @@
           <span class="brand-paw" id="brand-icon">🐾</span>
           <span class="brand-title" id="brand-title">Chi-Do List</span>
         </div>
-        <button type="button" class="pet-quick-switch" id="btn-pet-switch" title="Đổi nhanh giữa Sếp Chihuahua 🐶 và Sếp Bò Sữa 🐮">
+        <button type="button" class="pet-quick-switch" id="btn-pet-switch" title="Đổi nhanh giữa Sếp Chihuahua 🐶, Sếp Bò Sữa 🐮 và Sếp Ếch Xanh 🐸">
           <span id="pet-switch-label">🐮 Đổi Bò Sữa</span>
         </button>
         <div class="progress-pill" id="progress-pill" title="Tiến độ công việc hôm nay">
@@ -782,6 +782,150 @@
                 <line x1="166" y1="199" x2="166" y2="209" stroke="#FFFDF9" stroke-width="2" stroke-linecap="round" opacity="0.65" />
               </g>
             </svg>
+
+            <!-- CHIBI MATCHA FROG SVG (Shown when user switches to Ếch Xanh theme!) -->
+            <svg viewBox="0 0 260 225" class="frog-svg" id="frog-svg" aria-hidden="true">
+              <!-- Desk contact shadow -->
+              <ellipse cx="130" cy="209" rx="76" ry="10" fill="rgba(42, 74, 52, 0.2)" />
+
+              <!-- Cute Little Lotus Leaf Cushion peeking behind frog -->
+              <g class="chi-tail">
+                <path d="M 176 184 Q 214 176 218 158 Q 204 150 186 164 Z"
+                      fill="#79C774" stroke="#2F4A38" stroke-width="2.8" stroke-linejoin="round" />
+                <line x1="184" y1="176" x2="210" y2="162" stroke="#2F4A38" stroke-width="1.8" stroke-linecap="round" opacity="0.55" />
+              </g>
+
+              <!-- Chibi Frog Body sitting at desk -->
+              <path d="M 76 144 Q 68 180 76 202 Q 130 212 184 202 Q 192 180 184 144 Z"
+                    fill="#8ED985" stroke="#2F4A38" stroke-width="3.4" stroke-linejoin="round" />
+              <!-- Soft Creamy-Matcha Tummy -->
+              <path d="M 96 150 Q 92 180 102 202 Q 130 208 158 202 Q 168 180 164 150 Z"
+                    fill="#EFFAE6" />
+
+              <!-- Crisp Office Collar & Sunny Lemon-Yellow Necktie -->
+              <g class="chi-office-tie">
+                <polygon points="103,146 130,159 111,167" fill="#FFFFFF" stroke="#2F4A38" stroke-width="2.4" stroke-linejoin="round" />
+                <polygon points="157,146 130,159 149,167" fill="#FFFFFF" stroke="#2F4A38" stroke-width="2.4" stroke-linejoin="round" />
+                <polygon points="124,158 136,158 139,186 130,195 121,186" fill="#FFD95E" stroke="#2F4A38" stroke-width="2.4" stroke-linejoin="round" />
+                <polygon points="124,155 136,155 134,163 126,163" fill="#F5BE32" stroke="#2F4A38" stroke-width="2.2" stroke-linejoin="round" />
+                <!-- Cute tiny clover dot on tie -->
+                <circle cx="130" cy="176" r="3" fill="#7CC96B" />
+              </g>
+
+              <!-- MATCHA FROG HEAD GROUP -->
+              <g class="chi-head-group">
+                <!-- Cute Little Sprout Leaf on Top of Head -->
+                <g class="chi-ear-left">
+                  <path d="M 130 68 Q 126 48 112 44 Q 114 60 130 62 Z"
+                        fill="#A8E890" stroke="#2F4A38" stroke-width="2.4" stroke-linejoin="round" />
+                </g>
+                <g class="chi-ear-right">
+                  <path d="M 130 68 Q 134 48 148 44 Q 146 60 130 62 Z"
+                        fill="#84D47A" stroke="#2F4A38" stroke-width="2.4" stroke-linejoin="round" />
+                </g>
+
+                <!-- Signature Wide Squishable Frog Head + Twin Top Eye Domes -->
+                <path d="M 60 112 C 58 84, 72 72, 82 70 C 78 46, 108 38, 120 62 Q 130 60 140 62 C 152 38, 182 46, 178 70 C 188 72, 202 84, 200 112 C 200 140, 172 156, 130 156 C 88 156, 60 140, 60 112 Z"
+                      fill="#8ED985" stroke="#2F4A38" stroke-width="3.4" stroke-linejoin="round" />
+
+                <!-- Soft Light-Green Lower Cheek Glow -->
+                <ellipse cx="130" cy="134" rx="54" ry="18" fill="#CFF2C4" opacity="0.65" />
+
+                <!-- Cute Pastel Mint/Yellow Over-Ear Headphones (Shown when music plays!) -->
+                <g class="chi-headphones">
+                  <path d="M 58 106 C 58 28, 202 28, 202 106" fill="none" stroke="#2F4A38" stroke-width="9.5" stroke-linecap="round" />
+                  <path d="M 58 106 C 58 28, 202 28, 202 106" fill="none" stroke="#FFE066" stroke-width="4.8" stroke-linecap="round" />
+                  <rect x="46" y="94" width="18" height="32" rx="9" fill="#FFD65A" stroke="#2F4A38" stroke-width="2.8" />
+                  <rect x="58" y="98" width="7" height="24" rx="3.5" fill="#FFFDF5" stroke="#2F4A38" stroke-width="2" />
+                  <rect x="196" y="94" width="18" height="32" rx="9" fill="#FFD65A" stroke="#2F4A38" stroke-width="2.8" />
+                  <rect x="195" y="98" width="7" height="24" rx="3.5" fill="#FFFDF5" stroke="#2F4A38" stroke-width="2" />
+                </g>
+
+                <!-- BIG GLOSSY FROG EYES ON TOP DOMES -->
+                <g class="chi-eyes-normal">
+                  <!-- Left Eye -->
+                  <g class="chi-eye-left">
+                    <circle cx="98" cy="74" r="17.5" fill="#FFFFFF" stroke="#2F4A38" stroke-width="2.6" />
+                    <g class="chi-pupil" data-eye="left">
+                      <circle cx="98" cy="75" r="10.5" fill="#233829" />
+                      <circle cx="94" cy="70.5" r="4" fill="#FFFFFF" />
+                      <circle cx="102" cy="79" r="1.9" fill="#FFFFFF" opacity="0.9" />
+                    </g>
+                  </g>
+                  <!-- Right Eye -->
+                  <g class="chi-eye-right">
+                    <circle cx="162" cy="74" r="17.5" fill="#FFFFFF" stroke="#2F4A38" stroke-width="2.6" />
+                    <g class="chi-pupil" data-eye="right">
+                      <circle cx="162" cy="75" r="10.5" fill="#233829" />
+                      <circle cx="158" cy="70.5" r="4" fill="#FFFFFF" />
+                      <circle cx="166" cy="79" r="1.9" fill="#FFFFFF" opacity="0.9" />
+                    </g>
+                  </g>
+                  <!-- Blinking Eyelids -->
+                  <circle class="chi-eyelid" cx="98" cy="74" r="18" fill="#8ED985" />
+                  <circle class="chi-eyelid" cx="162" cy="74" r="18" fill="#8ED985" />
+                </g>
+
+                <!-- HAPPY SQUINT EYES (^ ^) -->
+                <g class="chi-eyes-happy">
+                  <circle cx="98" cy="74" r="17.5" fill="#FFFFFF" stroke="#2F4A38" stroke-width="2.6" />
+                  <circle cx="162" cy="74" r="17.5" fill="#FFFFFF" stroke="#2F4A38" stroke-width="2.6" />
+                  <path d="M 88 77 Q 98 64 108 77" fill="none" stroke="#233829" stroke-width="3.6" stroke-linecap="round" />
+                  <path d="M 152 77 Q 162 64 172 77" fill="none" stroke="#233829" stroke-width="3.6" stroke-linecap="round" />
+                </g>
+
+                <!-- Cute Optional Round Gold Office Glasses -->
+                <g class="chi-glasses">
+                  <circle cx="98" cy="74" r="21" fill="rgba(255,255,255,0.14)" stroke="#C8933B" stroke-width="2.6" />
+                  <circle cx="162" cy="74" r="21" fill="rgba(255,255,255,0.14)" stroke="#C8933B" stroke-width="2.6" />
+                  <path d="M 119 74 Q 130 69 141 74" fill="none" stroke="#C8933B" stroke-width="2.6" stroke-linecap="round" />
+                </g>
+
+                <!-- Cute Rosy Peach Cheeks -->
+                <ellipse class="chi-blush" cx="80" cy="116" rx="11" ry="6" fill="#FF98AE" opacity="0.62" />
+                <ellipse class="chi-blush" cx="180" cy="116" rx="11" ry="6" fill="#FF98AE" opacity="0.62" />
+
+                <!-- Two Tiny Cute Frog Nostrils -->
+                <circle cx="122" cy="105" r="2.2" fill="#2F4A38" />
+                <circle cx="138" cy="105" r="2.2" fill="#2F4A38" />
+
+                <!-- Wide Happy Keroppi-style Frog Smile -->
+                <g class="chi-mouth-normal">
+                  <path d="M 98 117 Q 130 137 162 117" fill="none" stroke="#2F4A38" stroke-width="2.8" stroke-linecap="round" />
+                  <path class="chi-tongue" d="M 122 126 Q 130 141 138 126 Z" fill="#FF859E" stroke="#2F4A38" stroke-width="2" stroke-linejoin="round" />
+                </g>
+
+                <!-- Wide Open Frog Mouth (Eating Sticky Note or Croaking!) -->
+                <g class="chi-mouth-open">
+                  <ellipse cx="130" cy="127" rx="26" ry="15" fill="#7D2E3A" stroke="#2F4A38" stroke-width="2.8" />
+                  <path d="M 112 132 Q 130 120 148 132 Q 140 142 130 142 Q 120 142 112 132 Z"
+                        fill="#FF8AA1" stroke="#2F4A38" stroke-width="1.6" />
+                </g>
+
+                <!-- Chewing Mouth -->
+                <g class="chi-mouth-chew">
+                  <path d="M 114 126 Q 122 120 130 126 Q 138 120 146 126 Q 138 135 130 132 Q 122 135 114 126 Z"
+                        fill="#FF8AA1" stroke="#2F4A38" stroke-width="2.4" stroke-linejoin="round" />
+                </g>
+              </g>
+
+              <!-- Cute Little Frog Hands Resting on Desk Edge -->
+              <g class="chi-paws">
+                <ellipse cx="94" cy="199" rx="17" ry="11" fill="#8ED985" stroke="#2F4A38" stroke-width="3" />
+                <line x1="88" y1="201" x2="88" y2="208" stroke="#2F4A38" stroke-width="2" stroke-linecap="round" />
+                <line x1="95" y1="201" x2="95" y2="208" stroke="#2F4A38" stroke-width="2" stroke-linecap="round" />
+                <!-- Right hand holding a coral-orange pencil! -->
+                <g transform="rotate(-22 178 190)">
+                  <rect x="166" y="168" width="8" height="36" rx="2.5" fill="#FFA474" stroke="#2F4A38" stroke-width="2" />
+                  <polygon points="166,168 174,168 170,158" fill="#FFE8D1" stroke="#2F4A38" stroke-width="2" stroke-linejoin="round" />
+                  <polygon points="168.5,161.5 171.5,161.5 170,158" fill="#2F4A38" />
+                  <rect x="166" y="200" width="8" height="6" rx="1.5" fill="#FFD95E" stroke="#2F4A38" stroke-width="2" />
+                </g>
+                <ellipse cx="166" cy="199" rx="17" ry="11" fill="#8ED985" stroke="#2F4A38" stroke-width="3" />
+                <line x1="163" y1="201" x2="163" y2="208" stroke="#2F4A38" stroke-width="2" stroke-linecap="round" />
+                <line x1="170" y1="201" x2="170" y2="208" stroke="#2F4A38" stroke-width="2" stroke-linecap="round" />
+              </g>
+            </svg>
           </button>
 
           <!-- Cute Office Desk Nameplate (Click to toggle glasses!) -->
@@ -1255,13 +1399,18 @@
           <div class="pet-theme-choices" id="pet-theme-choices">
             <button type="button" class="pet-theme-card active" data-pet="chihuahua">
               <span class="pet-theme-emoji">🐶</span>
-              <strong>Sếp Chihuahua</strong>
-              <span>Phòng gỗ ấm • Bảng ghim bần</span>
+              <strong>Chihuahua</strong>
+              <span>Gỗ ấm • Bảng bần</span>
             </button>
             <button type="button" class="pet-theme-card" data-pet="cow">
               <span class="pet-theme-emoji">🐮</span>
-              <strong>Sếp Bò Sữa</strong>
-              <span>Phòng xanh sữa • Bảng lỗ trắng</span>
+              <strong>Bò Sữa</strong>
+              <span>Xanh sữa • Bảng lỗ</span>
+            </button>
+            <button type="button" class="pet-theme-card" data-pet="frog">
+              <span class="pet-theme-emoji">🐸</span>
+              <strong>Ếch Xanh</strong>
+              <span>Matcha • Bảng kẻ ô</span>
             </button>
           </div>
         </div>
@@ -1313,6 +1462,6 @@
     </div>
   </div>
 
-  <script src="app.js?v=cow3"></script>
+  <script src="app.js?v=frog1"></script>
 </body>
 </html>
