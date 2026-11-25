@@ -163,8 +163,13 @@
   let isDraggingAnyNote = false;
   let justStampedNoteId = null;
 
-  // AudioContext (lazily initialized on user gesture)
+  // AudioContext (lazily initialized on user gesture) & custom MP4 alarm audio
   let audioCtx = null;
+  const customAlarmAudio = new Audio('assets/alarm-bark.mp4');
+  customAlarmAudio.loop = true;
+  customAlarmAudio.preload = 'auto';
+  customAlarmAudio.volume = 0.85;
+  let customAlarmPlaying = false;
 
   // DOM References
   const boardCanvas = document.getElementById('board-canvas');
@@ -804,8 +809,33 @@
       alarmRingInterval = null;
     }
     alarmRingTick = 0;
+    customAlarmPlaying = false;
+    try {
+      customAlarmAudio.pause();
+      customAlarmAudio.currentTime = 0;
+    } catch {
+      // Ignore
+    }
     if (!pomoState.running) {
       document.title = DEFAULT_DOC_TITLE;
+    }
+  }
+
+  function playCustomAlarmAudio() {
+    if (!settings.sound) return;
+    try {
+      customAlarmAudio.currentTime = 0;
+      const playPromise = customAlarmAudio.play();
+      customAlarmPlaying = true;
+      if (playPromise && typeof playPromise.catch === 'function') {
+        playPromise.catch(() => {
+          customAlarmPlaying = false;
+          playCuteSound('ring');
+        });
+      }
+    } catch {
+      customAlarmPlaying = false;
+      playCuteSound('ring');
     }
   }
 
@@ -813,8 +843,8 @@
     stopAlarmRingLoop();
     alarmRingTick = 0;
 
-    // Ring right away, then keep ringing "reng reng" every 1.9s until user turns it off!
-    playCuteSound('ring');
+    // Loop custom MP4 alarm sound continuously until the user dismisses it!
+    playCustomAlarmAudio();
     if (!pomoState.running) {
       document.title = `🔔 RENG RENG! (${note.remindTime}) — Chi-Do List`;
     }
@@ -825,7 +855,11 @@
         return;
       }
       alarmRingTick += 1;
-      playCuteSound('ring');
+
+      // Fallback synthesized bell only if MP4 audio isn't playing while sound is enabled
+      if (settings.sound && (!customAlarmPlaying || customAlarmAudio.paused)) {
+        playCuteSound('ring');
+      }
 
       if (!pomoState.running) {
         document.title =
@@ -835,7 +869,7 @@
       }
 
       if (alarmRingTick % 2 === 0) {
-        spawnChiParticles(['🔔', '⏰'], 2);
+        spawnChiParticles(['🔔', '⏰', '🐶'], 2);
       }
     }, 1900);
   }
@@ -2095,7 +2129,20 @@
     settings.sound = !settings.sound;
     applySettings();
     saveSettings();
-    if (settings.sound) playCuteSound('pin');
+    if (settings.sound) {
+      if (activeAlarmNoteId && !alarmToast.hidden) {
+        playCustomAlarmAudio();
+      } else {
+        playCuteSound('pin');
+      }
+    } else {
+      customAlarmPlaying = false;
+      try {
+        customAlarmAudio.pause();
+      } catch {
+        // Ignore
+      }
+    }
   });
 
   function toggleTheme() {
