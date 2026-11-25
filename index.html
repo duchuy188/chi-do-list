@@ -55,6 +55,10 @@
         <button class="icon-btn" id="btn-theme" title="Chuyển chế độ Ban ngày / Ban đêm ấm áp" aria-label="Đổi chế độ sáng tối">
           ☀️
         </button>
+
+        <button class="icon-btn mobile-guide-btn" id="btn-mobile-guide" title="Xem hướng dẫn sử dụng" aria-label="Xem hướng dẫn sử dụng">
+          ❓
+        </button>
       </nav>
     </header>
 
@@ -99,9 +103,10 @@
             <g class="fairy-bulb b12"><circle cx="1048" cy="22" r="11" class="bulb-halo" /><circle cx="1048" cy="22" r="4.5" class="bulb-core" /></g>
           </svg>
 
-          <!-- Cute decorative pinned Polaroid in top-right corner -->
-          <div class="board-decor polaroid-decor" aria-hidden="true">
+          <!-- Interactive Pinned Polaroid in top-right corner -> Opens User Guide! -->
+          <button type="button" class="board-decor polaroid-decor polaroid-guide-btn" id="btn-guide-polaroid" title="Nhấn để xem hướng dẫn sử dụng Chi-Do List 📖">
             <div class="decor-tape"></div>
+            <span class="polaroid-help-dot" aria-hidden="true">?</span>
             <div class="polaroid-pic">
               <svg viewBox="0 0 64 56" width="56" height="48">
                 <rect width="64" height="56" rx="4" fill="#FFF1E6" />
@@ -113,8 +118,8 @@
                 <text x="48" y="48" font-size="11">✨</text>
               </svg>
             </div>
-            <div class="polaroid-caption">Boss Chi ♡</div>
-          </div>
+            <div class="polaroid-caption">Hướng dẫn 📖</div>
+          </button>
 
           <!-- Cute decorative motivation card in top-left corner -->
           <div class="board-decor mini-card-decor" aria-hidden="true">
@@ -846,6 +851,57 @@
       <div class="modal-actions">
         <button type="button" class="modal-btn secondary" id="btn-cancel-trash">Để lại nha</button>
         <button type="button" class="modal-btn primary" id="btn-confirm-trash">🗑️ Đồng ý xóa</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cute User Guide Modal opened from the Polaroid ("Hướng dẫn 📖") -->
+  <div class="modal-backdrop" id="guide-modal-backdrop" hidden>
+    <div class="note-modal guide-modal" role="dialog" aria-modal="true" aria-labelledby="guide-modal-title">
+      <div class="modal-header">
+        <h2 id="guide-modal-title">📖 Sổ Tay Dùng Bảng Sếp Chi</h2>
+        <button type="button" class="modal-close" id="btn-close-guide-modal" aria-label="Đóng hướng dẫn">✕</button>
+      </div>
+
+      <div class="guide-sections">
+        <div class="guide-card">
+          <h3>📌 Bảng Ghim &amp; Giấy Note</h3>
+          <ul>
+            <li><strong>Dán note mới:</strong> Nhấn nút <b>📌 Dán note</b>, bấm xấp note trên bàn hoặc <b>nhấp đúp lên bảng</b>.</li>
+            <li><strong>Nhiều việc trên 1 tờ note:</strong> Nhấn <b>Enter xuống dòng</b> để tách nhiều ô tick riêng, hoặc bấm <b>+ Thêm việc</b> ngay trên note.</li>
+            <li><strong>Hẹn giờ nhắc &amp; sửa nhãn:</strong> Bấm vào <b>thẻ nhãn</b> để tự đổi tên, bấm <b>⏰</b> để đặt giờ nhắc trong ngày.</li>
+            <li><strong>Đóng mộc hoàn thành:</strong> Tick hết việc → Sếp Chi đóng dấu mộc đỏ <b>ĐÃ XONG</b> và khóa chỉnh sửa.</li>
+            <li><strong>Nhiều note thoải mái:</strong> Cuộn dọc ngay trong bảng hoặc bấm <b>✨ Xếp gọn</b> để căn hàng thẳng tắp.</li>
+          </ul>
+        </div>
+
+        <div class="guide-card">
+          <h3>🐶 Chơi Với Sếp Chihuahua</h3>
+          <ul>
+            <li><strong>Cho cún ăn note để xóa:</strong> Kéo tờ note thả vào <b>miệng Chihuahua</b> để cún há miệng <i>ngoàm ngoàm</i> xóa giúp!</li>
+            <li><strong>Xoa đầu vuốt ve:</strong> Di chuột (hoặc chạm giữ vuốt qua lại trên điện thoại) trên <b>đầu cún</b> ✋💖.</li>
+            <li><strong>Gọi cún sủa:</strong> Nhấn (click/tap) vào người cún để nghe sủa <b>"Gâu! Gâu!"</b> 🔊.</li>
+            <li><strong>Đổi kính văn phòng:</strong> Nhấn vào bảng tên <b>SẾP CHIHUAHUA</b> để đeo / tháo kính 👓.</li>
+          </ul>
+        </div>
+
+        <div class="guide-card">
+          <h3>🪑 Đồ Văn Phòng Trên Bàn</h3>
+          <ul>
+            <li><strong>💻 Laptop dán dấu chân:</strong> Nghe nhạc <b>Lo-fi, Mưa rơi, Lửa trại</b> (chạy offline), dán link <b>YouTube / Spotify</b> hoặc chọn file <b>MP3</b> từ máy — bật nhạc cún sẽ tự đeo tai nghe 🎧!</li>
+            <li><strong>🍅 Đồng hồ cà chua:</strong> Hẹn giờ <b>Pomodoro</b> (25p tập trung / 5p nghỉ / tự chỉnh số phút).</li>
+            <li><strong>🗑️ Thùng rác mini:</strong> Gom sạch toàn bộ các tờ note đã hoàn thành (có hỏi xác nhận trước khi xóa).</li>
+            <li><strong>💡 Đèn bàn &amp; ⏰ Đồng hồ:</strong> Nhấn đèn bàn đổi chế độ <b>Sáng / Tối ấm áp</b>, nhấn đồng hồ xem lịch nhắc gần nhất.</li>
+          </ul>
+        </div>
+
+        <div class="guide-save-tip">
+          💾 Mọi tờ note &amp; cài đặt được <strong>tự động lưu trong trình duyệt</strong> của bạn — tắt máy hôm sau mở lại vẫn còn nguyên!
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="modal-btn primary" id="btn-ok-guide">Đã hiểu, bắt đầu thôi! 🐾</button>
       </div>
     </div>
   </div>

@@ -233,6 +233,13 @@
   const trashConfirmDesc = document.getElementById('trash-confirm-desc');
   const trashPreviewList = document.getElementById('trash-preview-list');
 
+  // User Guide Modal Elements (Polaroid on desktop + ? icon on mobile)
+  const btnGuidePolaroid = document.getElementById('btn-guide-polaroid');
+  const btnMobileGuide = document.getElementById('btn-mobile-guide');
+  const guideModalBackdrop = document.getElementById('guide-modal-backdrop');
+  const btnCloseGuideModal = document.getElementById('btn-close-guide-modal');
+  const btnOkGuide = document.getElementById('btn-ok-guide');
+
   // Tomato Pomodoro Timer Elements
   const pomoWrap = document.getElementById('pomodoro-desk-wrap');
   const propPomodoro = document.getElementById('prop-pomodoro');
@@ -1979,6 +1986,7 @@
     if (e.key === 'Escape') {
       if (!modalBackdrop.hidden) closeComposer();
       if (!trashModalBackdrop.hidden) closeTrashConfirmModal();
+      if (!guideModalBackdrop.hidden) closeGuideModal();
       if (!pomoPopover.hidden) pomoPopover.hidden = true;
       if (!musicPopover.classList.contains('is-closed')) musicPopover.classList.add('is-closed');
     }
@@ -2352,6 +2360,32 @@
   btnConfirmTrash.addEventListener('click', sweepCompletedNotesToTrash);
   trashModalBackdrop.addEventListener('click', (e) => {
     if (e.target === trashModalBackdrop) closeTrashConfirmModal();
+  });
+
+  /* ========================================================================
+     Interactive Polaroid User Guide Modal
+     ======================================================================== */
+  function openGuideModal() {
+    playCuteSound('click');
+    guideModalBackdrop.hidden = false;
+  }
+
+  function closeGuideModal() {
+    guideModalBackdrop.hidden = true;
+  }
+
+  btnGuidePolaroid.addEventListener('click', openGuideModal);
+  btnMobileGuide.addEventListener('click', openGuideModal);
+  btnCloseGuideModal.addEventListener('click', closeGuideModal);
+  btnOkGuide.addEventListener('click', () => {
+    playCuteSound('pin');
+    closeGuideModal();
+    setChiMood('happy', 1500);
+    spawnChiParticles(['🐾', '✨', '💖'], 4);
+    chiSay('Tuyệt vời! Sẵn sàng chinh phục mọi tờ note cùng Sếp Chi nào! 💪🐾', 3800);
+  });
+  guideModalBackdrop.addEventListener('click', (e) => {
+    if (e.target === guideModalBackdrop) closeGuideModal();
   });
 
   /* ========================================================================
