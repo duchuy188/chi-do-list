@@ -156,8 +156,9 @@
     dropPos: null,
   };
 
-  // Active ringing alarm note ID, drag state & freshly-stamped note ID
+  // Active ringing alarm note ID, source ('note' | 'pomo'), drag state & freshly-stamped note ID
   let activeAlarmNoteId = null;
+  let activeAlarmSource = null;
   let alarmRingInterval = null;
   let alarmRingTick = 0;
   let isDraggingAnyNote = false;
@@ -235,6 +236,7 @@
 
   // Alarm Toast Elements
   const alarmToast = document.getElementById('alarm-toast');
+  const alarmToastTitle = alarmToast.querySelector('.alarm-toast-title');
   const alarmToastTime = document.getElementById('alarm-toast-time');
   const alarmToastText = document.getElementById('alarm-toast-text');
   const btnAlarmDone = document.getElementById('btn-alarm-done');
@@ -868,18 +870,18 @@
     }
   }
 
-  function startAlarmRingLoop(note) {
+  function startAlarmRingLoop(label) {
     stopAlarmRingLoop();
     alarmRingTick = 0;
 
-    // Loop custom MP4 alarm sound continuously until the user dismisses it!
+    // Loop custom MP4 dog bark sound continuously until the user dismisses it!
     playCustomAlarmAudio();
     if (!pomoState.running) {
-      document.title = `🔔 RENG RENG! (${note.remindTime}) — Chi-Do List`;
+      document.title = `🔔 ${label} — Chi-Do List`;
     }
 
     alarmRingInterval = setInterval(() => {
-      if (!activeAlarmNoteId || alarmToast.hidden) {
+      if (!activeAlarmSource || alarmToast.hidden) {
         stopAlarmRingLoop();
         return;
       }
@@ -893,8 +895,8 @@
       if (!pomoState.running) {
         document.title =
           alarmRingTick % 2 === 0
-            ? `🔔 RENG RENG! (${note.remindTime}) — Chi-Do List`
-            : `⏰ Tới giờ rồi! — Chi-Do List`;
+            ? `🔔 ${label} — Chi-Do List`
+            : `🐶 Gâu gâu! Tới giờ rồi! — Chi-Do List`;
       }
 
       if (alarmRingTick % 2 === 0) {
@@ -904,17 +906,22 @@
   }
 
   function triggerReminderAlarm(note) {
+    activeAlarmSource = 'note';
     activeAlarmNoteId = note.id;
     note.remindedDate = getTodayKey();
     saveNotes();
 
     const summary = getNoteSummaryText(note);
+    if (alarmToastTitle) alarmToastTitle.textContent = 'Sếp Chi nhắc việc tới giờ!';
     alarmToastTime.textContent = `⏰ ${note.remindTime}`;
     alarmToastText.textContent = summary;
+    btnAlarmDone.hidden = false;
+    btnAlarmSnooze.hidden = false;
+    btnAlarmDismiss.textContent = '👌 Đã biết';
     alarmToast.hidden = false;
 
     propDeskClock.classList.add('is-ringing');
-    startAlarmRingLoop(note);
+    startAlarmRingLoop(`RENG RENG! (${note.remindTime})`);
     setChiMood('excited', 3200);
     spawnChiParticles(['⏰', '🔔', '🐾', '✨'], 7);
     chiSay(`Reng reng! Tới ${note.remindTime} rồi: "${summary}" ⏰🐾`, 7500);
@@ -936,9 +943,14 @@
 
   function clearActiveAlarm() {
     stopAlarmRingLoop();
+    activeAlarmSource = null;
     activeAlarmNoteId = null;
     alarmToast.hidden = true;
     propDeskClock.classList.remove('is-ringing');
+    propPomodoro.classList.remove('is-ringing');
+    btnAlarmDone.hidden = false;
+    btnAlarmSnooze.hidden = false;
+    btnAlarmDismiss.textContent = '👌 Đã biết';
     renderNotes();
   }
 
@@ -1797,10 +1809,7 @@
     }
 
     if (note.done && activeAlarmNoteId === noteId) {
-      stopAlarmRingLoop();
-      activeAlarmNoteId = null;
-      alarmToast.hidden = true;
-      propDeskClock.classList.remove('is-ringing');
+      clearActiveAlarm();
     }
 
     saveNotes();
@@ -1827,10 +1836,7 @@
       justStampedNoteId = note.id;
     }
     if (note.done && activeAlarmNoteId === id) {
-      stopAlarmRingLoop();
-      activeAlarmNoteId = null;
-      alarmToast.hidden = true;
-      propDeskClock.classList.remove('is-ringing');
+      clearActiveAlarm();
     }
     saveNotes();
     renderNotes();
@@ -2159,7 +2165,7 @@
     applySettings();
     saveSettings();
     if (settings.sound) {
-      if (activeAlarmNoteId && !alarmToast.hidden) {
+      if (activeAlarmSource && !alarmToast.hidden) {
         playCustomAlarmAudio();
       } else {
         playCuteSound('pin');
@@ -2640,7 +2646,9 @@
           ? '▶ Tiếp tục'
           : '▶ Bắt đầu';
       btnPomoToggle.classList.remove('is-paused');
-      document.title = DEFAULT_DOC_TITLE;
+      if (!activeAlarmSource) {
+        document.title = DEFAULT_DOC_TITLE;
+      }
     }
 
     pomoDoneCountEl.textContent = String(pomoState.doneToday);
@@ -2675,11 +2683,10 @@
     pomoState.remainingSeconds = 0;
     renderPomoUI();
 
-    playCuteSound('alarm');
+    const finishedFocus = pomoState.mode === 'focus';
     propPomodoro.classList.add('is-ringing');
-    setTimeout(() => propPomodoro.classList.remove('is-ringing'), 2400);
 
-    if (pomoState.mode === 'focus') {
+    if (finishedFocus) {
       if (pomoState.doneDate !== getTodayKey()) {
         pomoState.doneDate = getTodayKey();
         pomoState.doneToday = 0;
@@ -2687,10 +2694,22 @@
       pomoState.doneToday += 1;
       savePomoStats();
 
+      // Ring with the real Chihuahua bark MP4 looping until dismissed!
+      activeAlarmSource = 'pomo';
+      activeAlarmNoteId = null;
+      if (alarmToastTitle) alarmToastTitle.textContent = '🍅 Hết giờ Pomodoro tập trung!';
+      alarmToastTime.textContent = `🍅 Quả #${pomoState.doneToday}`;
+      alarmToastText.textContent = `Chúc mừng! Xong 1 phiên tập trung rồi (Hôm nay: ${pomoState.doneToday} quả). Nghỉ ngơi chút nhé~ ☕`;
+      btnAlarmDone.hidden = true;
+      btnAlarmSnooze.hidden = true;
+      btnAlarmDismiss.textContent = '👌 Tắt chuông';
+      alarmToast.hidden = false;
+      startAlarmRingLoop('Hết giờ Pomodoro!');
+
       setChiMood('happy', 3200);
       spawnChiParticles(['🍅', '✨', '🎉', '🐾', '💖'], 8);
       chiSay(
-        `Ting ting! Xong 1 quả cà chua tập trung rồi! (Hôm nay: ${pomoState.doneToday} 🍅) Nghỉ 5 phút nha~ ☕`,
+        `Gâu gâu! Xong 1 quả cà chua tập trung rồi! (Hôm nay: ${pomoState.doneToday} 🍅) Nghỉ 5 phút nha~ ☕`,
         6200
       );
 
@@ -2708,9 +2727,20 @@
       const nextBreak = pomoState.doneToday % 4 === 0 ? 'long' : 'short';
       setTimeout(() => switchPomoMode(nextBreak), 900);
     } else {
+      activeAlarmSource = 'pomo';
+      activeAlarmNoteId = null;
+      if (alarmToastTitle) alarmToastTitle.textContent = '🍅 Hết giờ nghỉ Pomodoro!';
+      alarmToastTime.textContent = '⏰ 00:00';
+      alarmToastText.textContent = 'Hết giờ nghỉ rồi đồng nghiệp ơi! Quay lại phiên cà chua tập trung mới nào~ 💪';
+      btnAlarmDone.hidden = true;
+      btnAlarmSnooze.hidden = true;
+      btnAlarmDismiss.textContent = '👌 Tắt chuông';
+      alarmToast.hidden = false;
+      startAlarmRingLoop('Hết giờ nghỉ!');
+
       setChiMood('excited', 2600);
       spawnChiParticles(['🍅', '💪', '🐾', '✨'], 6);
-      chiSay('Hết giờ nghỉ rồi đồng nghiệp ơi! Bắt đầu quả cà chua tập trung mới nào~ 🍅💪', 5400);
+      chiSay('Gâu gâu! Hết giờ nghỉ rồi đồng nghiệp ơi! Bắt đầu quả cà chua mới nào~ 🍅💪', 5400);
 
       if ('Notification' in window && Notification.permission === 'granted') {
         try {
@@ -2727,6 +2757,9 @@
   }
 
   function startPomoTimer() {
+    if (activeAlarmSource === 'pomo') {
+      clearActiveAlarm();
+    }
     if (pomoState.remainingSeconds <= 0) {
       pomoState.remainingSeconds = pomoState.totalSeconds;
     }
