@@ -1,0 +1,11 @@
+{
+  "name": "chi-do-list",
+  "version": "1.0.0",
+  "description": "To-Do List phong cách dễ thương với bảng ghim giấy note và Sếp Chihuahua văn phòng",
+  "private": true,
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "deploy": "npx vercel --prod"
+  }
+}

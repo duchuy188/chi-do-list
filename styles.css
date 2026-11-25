@@ -1,0 +1,3773 @@
+/* ==========================================================================
+   Chi-Do List — Cute Chibi Chihuahua Office Desk & Corkboard To-Do UI
+   ========================================================================== */
+
+:root {
+  /* Day theme palette */
+  --ink: #5A3E32;
+  --ink-soft: #7E5E4E;
+  --wall-a: #FFF6E9;
+  --wall-b: #FBEBD5;
+  --wood-frame-1: #D99B66;
+  --wood-frame-2: #B97A45;
+  --wood-frame-3: #965D31;
+  --cork-base: #DFB687;
+  --cork-dark: #CE9F6D;
+  --desk-top-1: #F2CFA0;
+  --desk-top-2: #E2B37D;
+  --desk-front-1: #C78E58;
+  --desk-front-2: #A66E3E;
+  --mat-bg: #FFF1EA;
+  --mat-border: #F2C9BE;
+  --toolbar-bg: rgba(255, 250, 242, 0.88);
+  --toolbar-border: rgba(185, 134, 92, 0.35);
+  --accent-coral: #FF7C8F;
+  --accent-coral-dark: #EE5D75;
+  --shadow-warm: rgba(90, 62, 50, 0.18);
+
+  /* Sticky note pastel colors */
+  --note-yellow: #FFF3A8;
+  --note-pink: #FFD6E4;
+  --note-mint: #CBF3DF;
+  --note-blue: #CEE9FF;
+  --note-lavender: #E7D6FF;
+  --note-peach: #FFE1C4;
+}
+
+body.theme-night {
+  --wall-a: #2E2944;
+  --wall-b: #27223B;
+  --wood-frame-1: #9D6A43;
+  --wood-frame-2: #7D502E;
+  --wood-frame-3: #5D391F;
+  --cork-base: #A9815A;
+  --cork-dark: #936C48;
+  --desk-top-1: #B88B60;
+  --desk-top-2: #9C7048;
+  --desk-front-1: #7C5433;
+  --desk-front-2: #5F3E24;
+  --mat-bg: #DFC3BA;
+  --mat-border: #B5958C;
+  --toolbar-bg: rgba(45, 39, 68, 0.88);
+  --toolbar-border: rgba(255, 214, 153, 0.28);
+  --shadow-warm: rgba(15, 10, 28, 0.38);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  font-family: 'Quicksand', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--ink);
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==========================================================================
+   Room Scene & Office Wall Background
+   ========================================================================== */
+
+.room-scene {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--wall-a) 0px,
+    var(--wall-a) 44px,
+    var(--wall-b) 44px,
+    var(--wall-b) 88px
+  );
+  transition: background 0.5s ease;
+  overflow: hidden;
+}
+
+.wall-ambient {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.sun-ray {
+  position: absolute;
+  top: -120px;
+  left: -80px;
+  width: 460px;
+  height: 125%;
+  background: linear-gradient(115deg, rgba(255, 248, 214, 0.42), rgba(255, 248, 214, 0));
+  transform: rotate(16deg);
+  transition: opacity 0.6s ease;
+}
+
+.sun-ray.ray-2 {
+  left: 260px;
+  width: 260px;
+  opacity: 0.65;
+}
+
+body.theme-night .sun-ray {
+  opacity: 0;
+}
+
+.night-stars {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background-image:
+    radial-gradient(2px 2px at 12% 10%, #FFF6C2, transparent),
+    radial-gradient(2.5px 2.5px at 88% 12%, #FFE5B4, transparent),
+    radial-gradient(1.8px 1.8px at 6% 36%, #FFF6C2, transparent),
+    radial-gradient(2px 2px at 94% 38%, #FFD9E8, transparent),
+    radial-gradient(1.5px 1.5px at 50% 6%, #FFF6C2, transparent);
+  transition: opacity 0.6s ease;
+}
+
+body.theme-night .night-stars {
+  opacity: 0.85;
+}
+
+/* ==========================================================================
+   Top Wall Toolbar
+   ========================================================================== */
+
+.wall-toolbar {
+  position: relative;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 24px 8px;
+  max-width: 1220px;
+  width: 100%;
+  margin: 0 auto;
+  flex-shrink: 0;
+}
+
+.brand-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.brand-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 15px;
+  background: var(--toolbar-bg);
+  border: 2px solid var(--toolbar-border);
+  border-radius: 999px;
+  box-shadow: 0 4px 12px var(--shadow-warm);
+  backdrop-filter: blur(8px);
+}
+
+.brand-paw {
+  font-size: 1.15rem;
+}
+
+.brand-title {
+  font-weight: 700;
+  font-size: 1.08rem;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+}
+
+body.theme-night .brand-title,
+body.theme-night .progress-text,
+body.theme-night .filter-btn,
+body.theme-night .tool-btn,
+body.theme-night .icon-btn {
+  color: #FFF3E0;
+}
+
+.progress-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 14px;
+  background: var(--toolbar-bg);
+  border: 2px solid var(--toolbar-border);
+  border-radius: 999px;
+  box-shadow: 0 4px 12px var(--shadow-warm);
+  backdrop-filter: blur(8px);
+}
+
+.progress-bar-track {
+  width: 72px;
+  height: 9px;
+  background: rgba(185, 134, 92, 0.24);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #FF8FA8, #FFB870);
+  border-radius: 999px;
+  transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.progress-text {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
+.toolbar-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: inline-flex;
+  padding: 3px;
+  background: var(--toolbar-bg);
+  border: 2px solid var(--toolbar-border);
+  border-radius: 999px;
+  box-shadow: 0 4px 12px var(--shadow-warm);
+  backdrop-filter: blur(8px);
+}
+
+.filter-btn {
+  border: none;
+  background: transparent;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-btn:hover {
+  color: var(--ink);
+}
+
+.filter-btn.active {
+  background: #FFE5B4;
+  color: #5A3E32;
+  box-shadow: 0 2px 6px rgba(90, 62, 50, 0.14);
+}
+
+.tool-btn, .icon-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 2px solid var(--toolbar-border);
+  background: var(--toolbar-bg);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px var(--shadow-warm);
+  transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.2s ease;
+}
+
+.icon-btn {
+  padding: 7px 11px;
+  font-size: 0.96rem;
+}
+
+.tool-btn:hover, .icon-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px var(--shadow-warm);
+}
+
+.tool-btn:active, .icon-btn:active {
+  transform: translateY(0px) scale(0.97);
+}
+
+.tool-btn.primary-btn {
+  background: linear-gradient(135deg, #FF8FA3, #FF6F88);
+  border-color: #E2546E;
+  color: #FFFFFF;
+}
+
+.tool-btn.primary-btn:hover {
+  background: linear-gradient(135deg, #FF7B94, #F75A77);
+}
+
+/* ==========================================================================
+   LAYER 2 (BACK): Wooden Corkboard
+   ========================================================================== */
+
+.board-stage {
+  position: relative;
+  z-index: 10;
+  flex: 1;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4px 24px 116px;
+  display: flex;
+  min-height: 0;
+}
+
+.corkboard-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 22px;
+  padding: 15px;
+  background: linear-gradient(145deg, var(--wood-frame-1), var(--wood-frame-2) 55%, var(--wood-frame-3));
+  box-shadow:
+    0 18px 36px var(--shadow-warm),
+    inset 0 2px 3px rgba(255, 240, 215, 0.45),
+    inset 0 -3px 6px rgba(72, 42, 18, 0.35);
+  border: 2.5px solid #6E4627;
+  display: flex;
+  transition: background 0.5s ease, box-shadow 0.5s ease;
+}
+
+/* Cute decorative brass corner brackets */
+.frame-bracket {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  background: radial-gradient(circle at 35% 35%, #FFF0B8, #D4A14E);
+  border: 1.8px solid #6E4627;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.22);
+  z-index: 4;
+  pointer-events: none;
+}
+.frame-bracket.tl { top: 4px; left: 4px; }
+.frame-bracket.tr { top: 4px; right: 4px; }
+.frame-bracket.bl { bottom: 4px; left: 4px; }
+.frame-bracket.br { bottom: 4px; right: 4px; }
+
+/* Textured Cork Surface */
+.corkboard-surface {
+  position: relative;
+  flex: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: var(--cork-base);
+  background-image:
+    radial-gradient(rgba(120, 74, 34, 0.16) 1.2px, transparent 1.2px),
+    radial-gradient(rgba(255, 236, 206, 0.22) 1.2px, transparent 1.2px),
+    radial-gradient(rgba(105, 62, 26, 0.1) 2px, transparent 2px),
+    linear-gradient(180deg, rgba(90, 52, 22, 0.08) 0%, transparent 14%, transparent 86%, rgba(90, 52, 22, 0.14) 100%);
+  background-size: 18px 18px, 24px 24px, 31px 31px, 100% 100%;
+  background-position: 0 0, 9px 11px, 4px 15px, 0 0;
+  box-shadow: inset 0 5px 14px rgba(72, 40, 14, 0.34);
+  border: 2px solid rgba(90, 52, 22, 0.36);
+  transition: background-color 0.5s ease;
+}
+
+/* Fairy Lights along Top of Board */
+.fairy-lights-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 58px;
+  pointer-events: none;
+  z-index: 15;
+}
+
+.fairy-bulb .bulb-core {
+  fill: #FFF7CC;
+  stroke: #B88B4A;
+  stroke-width: 1;
+}
+
+.fairy-bulb .bulb-halo {
+  fill: rgba(255, 230, 128, 0.28);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: fairyTwinkle 3.2s ease-in-out infinite;
+}
+
+.fairy-bulb:nth-child(even) .bulb-halo {
+  animation-delay: 1.4s;
+}
+
+body.theme-night .fairy-bulb .bulb-core {
+  fill: #FFF6B0;
+}
+
+body.theme-night .fairy-bulb .bulb-halo {
+  fill: rgba(255, 224, 112, 0.65);
+}
+
+@keyframes fairyTwinkle {
+  0%, 100% { opacity: 0.45; transform: scale(0.95); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+/* Cute Decorative Pinned Elements on Board Corners */
+.board-decor {
+  position: absolute;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.polaroid-decor {
+  top: 42px;
+  right: 18px;
+  width: 72px;
+  padding: 6px 6px 8px;
+  background: #FFFDF8;
+  border: 1.5px solid rgba(90, 62, 50, 0.25);
+  border-radius: 4px;
+  box-shadow: 2px 5px 10px rgba(72, 42, 18, 0.22);
+  transform: rotate(6deg);
+  text-align: center;
+}
+
+.decor-tape {
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-5deg);
+  width: 34px;
+  height: 13px;
+  background: rgba(255, 179, 198, 0.78);
+  border: 1px dashed rgba(90, 62, 50, 0.22);
+}
+
+.polaroid-pic {
+  border-radius: 3px;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.polaroid-caption {
+  margin-top: 4px;
+  font-family: 'Mali', cursive;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #7A5643;
+}
+
+.mini-card-decor {
+  top: 46px;
+  left: 16px;
+  padding: 9px 11px 8px;
+  background: #FFF9EC;
+  border: 1.6px dashed #D8A074;
+  border-radius: 8px;
+  box-shadow: 2px 4px 8px rgba(72, 42, 18, 0.18);
+  transform: rotate(-5deg);
+}
+
+.mini-pin {
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #FF9EB5, #E05878);
+  border: 1.5px solid #5A3E32;
+}
+
+.mini-card-text {
+  font-family: 'Mali', cursive;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #6B4938;
+  line-height: 1.25;
+}
+
+.mini-card-text span {
+  font-size: 0.64rem;
+  font-weight: 600;
+  color: #9C715A;
+}
+
+.board-tip {
+  position: absolute;
+  bottom: 52px;
+  right: 16px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: rgba(90, 56, 30, 0.68);
+  background: rgba(255, 248, 236, 0.72);
+  padding: 4px 11px;
+  border-radius: 999px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+body.theme-night .board-tip {
+  color: rgba(255, 244, 224, 0.78);
+  background: rgba(46, 36, 56, 0.45);
+}
+
+.board-empty-hint {
+  position: absolute;
+  top: 44%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  max-width: 340px;
+  padding: 18px 22px;
+  background: rgba(255, 250, 240, 0.85);
+  border: 2px dashed #C79263;
+  border-radius: 18px;
+  box-shadow: 0 6px 18px rgba(72, 42, 18, 0.14);
+  z-index: 5;
+}
+
+.board-empty-hint[hidden] {
+  display: none;
+}
+
+.empty-icon {
+  font-size: 2rem;
+  margin-bottom: 6px;
+}
+
+.board-empty-hint p {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+/* ==========================================================================
+   Scrollable Corkboard Area & Sticky Notes
+   ========================================================================== */
+
+.board-scroll {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 10;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(130, 82, 42, 0.45) transparent;
+}
+
+.board-scroll::-webkit-scrollbar {
+  width: 9px;
+}
+
+.board-scroll::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 56px 0 42px;
+}
+
+.board-scroll::-webkit-scrollbar-thumb {
+  background: rgba(120, 74, 38, 0.36);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.board-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(120, 74, 38, 0.58);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.notes-layer {
+  position: relative;
+  width: 100%;
+  min-height: 100%;
+  z-index: 10;
+}
+
+.sticky-note {
+  position: absolute;
+  width: 220px;
+  min-height: 136px;
+  padding: 24px 13px 13px;
+  border-radius: 6px 6px 18px 6px;
+  border: 1.8px solid rgba(90, 62, 50, 0.24);
+  box-shadow:
+    3px 7px 14px rgba(72, 42, 18, 0.24),
+    0 2px 3px rgba(72, 42, 18, 0.14);
+  cursor: grab;
+  touch-action: none;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  transition: box-shadow 0.2s ease, transform 0.2s ease, opacity 0.25s ease;
+  animation: notePopIn 0.34s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Curled paper bottom-right corner */
+.sticky-note::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 22px;
+  height: 22px;
+  background: linear-gradient(135deg, rgba(90, 62, 50, 0.08) 45%, rgba(255, 255, 255, 0.55) 50%, rgba(90, 62, 50, 0.15) 100%);
+  border-top-left-radius: 8px;
+  pointer-events: none;
+}
+
+.sticky-note.color-yellow { background: var(--note-yellow); }
+.sticky-note.color-pink { background: var(--note-pink); }
+.sticky-note.color-mint { background: var(--note-mint); }
+.sticky-note.color-blue { background: var(--note-blue); }
+.sticky-note.color-lavender { background: var(--note-lavender); }
+.sticky-note.color-peach { background: var(--note-peach); }
+
+.sticky-note:hover {
+  box-shadow:
+    5px 12px 22px rgba(72, 42, 18, 0.3),
+    0 3px 6px rgba(72, 42, 18, 0.16);
+}
+
+.sticky-note.dragging {
+  cursor: grabbing;
+  box-shadow:
+    10px 22px 32px rgba(56, 30, 12, 0.34),
+    0 6px 12px rgba(56, 30, 12, 0.2);
+  transition: none;
+}
+
+.sticky-note.is-done {
+  opacity: 0.88;
+}
+
+@keyframes notePopIn {
+  0% { opacity: 0; transform: scale(0.7) rotate(-8deg); }
+  100% { opacity: 1; }
+}
+
+/* Pushpin & Washi Tape Fasteners */
+.note-fastener.pushpin {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #5A3E32;
+  box-shadow: 0 3px 4px rgba(56, 30, 12, 0.32);
+  pointer-events: none;
+}
+
+.note-fastener.pushpin::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 3px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.pin-red { background: radial-gradient(circle at 35% 35%, #FF96A7, #E64B65); }
+.pin-mint { background: radial-gradient(circle at 35% 35%, #A5F0CE, #3DB682); }
+.pin-blue { background: radial-gradient(circle at 35% 35%, #A8D8FF, #4797E6); }
+.pin-gold { background: radial-gradient(circle at 35% 35%, #FFE78A, #E6A22E); }
+.pin-purple { background: radial-gradient(circle at 35% 35%, #D9B8FF, #9463E0); }
+
+.note-fastener.tape {
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-3deg);
+  width: 66px;
+  height: 20px;
+  border-radius: 2px;
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.62),
+    rgba(255, 255, 255, 0.62) 5px,
+    rgba(255, 166, 193, 0.56) 5px,
+    rgba(255, 166, 193, 0.56) 10px
+  );
+  border-left: 1px dashed rgba(90, 62, 50, 0.25);
+  border-right: 1px dashed rgba(90, 62, 50, 0.25);
+  box-shadow: 0 2px 4px rgba(72, 42, 18, 0.14);
+  pointer-events: none;
+}
+
+.note-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.note-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.68);
+  border: 1px solid rgba(90, 62, 50, 0.16);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #6B4A38;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.note-tag:hover {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(238, 93, 117, 0.45);
+}
+
+.note-tag-inline-input {
+  width: 112px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  border: 1.5px dashed #B56E4B;
+  background: rgba(255, 255, 255, 0.92);
+  font-family: inherit;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #5A3E32;
+  outline: none;
+}
+
+.note-actions {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  opacity: 0.35;
+  transition: opacity 0.18s ease;
+}
+
+.sticky-note:hover .note-actions,
+.sticky-note:focus-within .note-actions {
+  opacity: 1;
+}
+
+.note-mini-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.72);
+  color: #6B4A38;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.note-mini-btn:hover {
+  transform: scale(1.12);
+  background: #FFFFFF;
+}
+
+.note-mini-btn.delete-btn:hover {
+  background: #FF6F88;
+  color: #FFFFFF;
+}
+
+.note-body {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+}
+
+/* Multi-task checklist inside a single sticky note (auto-scrolls when many tasks!) */
+.note-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 162px;
+  overflow-y: auto;
+  padding-right: 3px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(110, 78, 61, 0.32) transparent;
+}
+
+.note-checklist::-webkit-scrollbar {
+  width: 5px;
+}
+
+.note-checklist::-webkit-scrollbar-thumb {
+  background: rgba(110, 78, 61, 0.28);
+  border-radius: 999px;
+}
+
+.note-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+/* Cute custom checkbox */
+.note-check-btn {
+  flex-shrink: 0;
+  margin-top: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 2px solid #6E4E3D;
+  background: rgba(255, 255, 255, 0.88);
+  color: #FFFFFF;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.note-check-btn:hover {
+  transform: scale(1.1);
+  border-color: #EE5D75;
+}
+
+.note-item.item-done .note-check-btn {
+  background: #FF7B94;
+  border-color: #D94D68;
+}
+
+.note-text {
+  margin: 0;
+  flex: 1;
+  font-family: 'Mali', cursive;
+  font-size: 0.91rem;
+  font-weight: 600;
+  line-height: 1.34;
+  color: #4D3327;
+  word-break: break-word;
+  white-space: pre-wrap;
+  cursor: text;
+}
+
+.note-item.item-done .note-text {
+  text-decoration: line-through;
+  text-decoration-thickness: 1.8px;
+  text-decoration-color: rgba(226, 84, 110, 0.72);
+  color: rgba(77, 51, 39, 0.56);
+}
+
+.note-item-del {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: rgba(110, 78, 61, 0.45);
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.14s ease, background 0.14s ease, color 0.14s ease;
+}
+
+.note-item:hover .note-item-del {
+  opacity: 1;
+}
+
+.note-item-del:hover {
+  background: rgba(255, 111, 136, 0.22);
+  color: #C72C48;
+}
+
+.note-add-item-row {
+  margin-top: 2px;
+}
+
+.note-add-item-btn {
+  border: none;
+  background: transparent;
+  padding: 2px 4px;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: rgba(107, 74, 56, 0.62);
+  cursor: pointer;
+  border-radius: 6px;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.note-add-item-btn:hover {
+  color: #C7344E;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.note-add-item-input {
+  width: 100%;
+  padding: 4px 7px;
+  border-radius: 7px;
+  border: 1.5px dashed #8B6148;
+  background: rgba(255, 255, 255, 0.85);
+  font-family: 'Mali', cursive;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #4D3327;
+  outline: none;
+}
+
+.note-progress-mini {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: rgba(107, 74, 56, 0.74);
+  background: rgba(255, 255, 255, 0.55);
+  padding: 1px 7px;
+  border-radius: 999px;
+}
+
+.note-edit-textarea {
+  width: 100%;
+  min-height: 58px;
+  resize: none;
+  border: 1.5px dashed #8B6148;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.75);
+  padding: 4px 6px;
+  font-family: 'Mali', cursive;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #4D3327;
+  outline: none;
+}
+
+/* Sticky Note Reminder Time Footer Badge & Inline Picker */
+.note-footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.note-time-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1.2px solid rgba(90, 62, 50, 0.22);
+  background: rgba(255, 255, 255, 0.72);
+  color: #6B4A38;
+  font-family: inherit;
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+
+.note-time-badge:hover {
+  background: #FFFFFF;
+  border-color: #EE5D75;
+  transform: translateY(-1px);
+}
+
+.note-time-badge.is-soon {
+  background: #FFF0C4;
+  border-color: #D99636;
+  color: #8A5312;
+}
+
+.note-time-badge.is-due {
+  background: #FFE0E6;
+  border-color: #E64B65;
+  color: #C72C48;
+  animation: badgePulse 1.1s ease-in-out infinite;
+}
+
+.sticky-note.is-ringing {
+  box-shadow:
+    0 0 0 3px rgba(255, 111, 136, 0.8),
+    0 12px 24px rgba(226, 84, 110, 0.34);
+  animation: noteAlarmWiggle 0.45s ease-in-out infinite alternate;
+}
+
+@keyframes badgePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
+@keyframes noteAlarmWiggle {
+  0% { transform: rotate(-2.5deg) scale(1.02); }
+  100% { transform: rotate(2.5deg) scale(1.04); }
+}
+
+.note-time-inline-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.note-time-inline-input {
+  padding: 2px 6px;
+  border-radius: 8px;
+  border: 1.5px dashed #B56E4B;
+  background: rgba(255, 255, 255, 0.94);
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #5A3E32;
+  outline: none;
+}
+
+.note-time-inline-save {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  background: #8FD694;
+  color: #FFFFFF;
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.note-time-inline-save:hover {
+  background: #6CC272;
+}
+
+.note-time-inline-clear {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 111, 136, 0.2);
+  color: #C72C48;
+  font-size: 0.68rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.note-time-inline-clear:hover {
+  background: #FF6F88;
+  color: #FFFFFF;
+}
+
+.sticky-note.is-done .note-tag,
+.sticky-note.is-done .note-text,
+.sticky-note.is-done .note-time-badge {
+  cursor: default;
+}
+
+.sticky-note.is-done .note-tag:hover,
+.sticky-note.is-done .note-time-badge:hover {
+  background: rgba(255, 255, 255, 0.68);
+  border-color: rgba(90, 62, 50, 0.16);
+  transform: none;
+}
+
+/* Authentic Round Office Rubber Stamp ("ĐÃ XONG — SẾP CHIHUAHUA") */
+.note-rubber-stamp {
+  position: absolute;
+  bottom: 10px;
+  right: 12px;
+  width: 92px;
+  height: 92px;
+  pointer-events: none;
+  z-index: 6;
+  transform: rotate(-15deg);
+  mix-blend-mode: multiply;
+  opacity: 0.86;
+  filter: drop-shadow(0 0 0.5px rgba(201, 36, 66, 0.35));
+}
+
+.note-rubber-stamp svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Slam animation played right when a note is freshly completed! */
+.note-rubber-stamp.stamp-animate {
+  animation: rubberStampSlam 0.48s cubic-bezier(0.22, 1.32, 0.45, 1) forwards;
+}
+
+@keyframes rubberStampSlam {
+  0% {
+    opacity: 0;
+    transform: translate(-10px, -24px) scale(2.15) rotate(-28deg);
+  }
+  42% {
+    opacity: 0.95;
+    transform: translate(0, 2px) scale(0.92) rotate(-13deg);
+  }
+  65% {
+    opacity: 0.9;
+    transform: translate(0, -1px) scale(1.04) rotate(-16deg);
+  }
+  100% {
+    opacity: 0.86;
+    transform: translate(0, 0) scale(1) rotate(-15deg);
+  }
+}
+
+/* Physical wooden stamper handle that presses down and lifts away on impact */
+.note-stamper-prop {
+  position: absolute;
+  bottom: 14px;
+  right: 12px;
+  width: 84px;
+  height: 96px;
+  pointer-events: none;
+  z-index: 12;
+  transform-origin: bottom center;
+  animation: stamperPressAndLift 0.62s cubic-bezier(0.3, 0.9, 0.35, 1) forwards;
+}
+
+@keyframes stamperPressAndLift {
+  0% {
+    opacity: 0;
+    transform: translate(24px, -78px) rotate(14deg) scale(1.1);
+  }
+  26% {
+    opacity: 1;
+    transform: translate(4px, -2px) rotate(-4deg) scale(1);
+  }
+  44% {
+    opacity: 1;
+    transform: translate(4px, 3px) rotate(-6deg) scale(0.96);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(28px, -84px) rotate(16deg) scale(1.06);
+  }
+}
+
+/* Subtle paper jolt when the rubber stamp hits the note */
+.sticky-note.stamp-impact {
+  animation: noteStampJolt 0.34s ease-out 0.14s;
+}
+
+@keyframes noteStampJolt {
+  0% { filter: brightness(1); }
+  35% { filter: brightness(0.97); margin-top: 3px; }
+  70% { margin-top: -1px; }
+  100% { filter: brightness(1); margin-top: 0; }
+}
+
+/* ==========================================================================
+   LAYER 3 (FRONT): Office Desk & Chibi Chihuahua Foreground
+   ========================================================================== */
+
+.desk-foreground {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 245px;
+  z-index: 30;
+  pointer-events: none;
+}
+
+/* Cozy warm glow cone from the desk lamp (visible in night mode) */
+.lamp-light-cone {
+  position: fixed;
+  right: 4%;
+  bottom: 92px;
+  width: 480px;
+  height: 360px;
+  background: radial-gradient(ellipse at 72% 78%, rgba(255, 224, 138, 0.34) 0%, rgba(255, 212, 112, 0.14) 45%, transparent 74%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+  z-index: 2;
+}
+
+body.theme-night .lamp-light-cone {
+  opacity: 1;
+}
+
+/* Office Desk Structure */
+.office-desk {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 118px;
+  pointer-events: auto;
+  z-index: 3;
+}
+
+.desk-surface {
+  position: relative;
+  width: 100%;
+  height: 78px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.04) 0px,
+      rgba(255, 255, 255, 0.04) 4px,
+      transparent 4px,
+      transparent 42px
+    ),
+    linear-gradient(180deg, var(--desk-top-1) 0%, var(--desk-top-2) 100%);
+  border-top: 3.5px solid #6E482B;
+  box-shadow:
+    0 -10px 24px rgba(56, 30, 12, 0.18),
+    inset 0 3px 0 rgba(255, 245, 224, 0.55);
+  transition: background 0.5s ease;
+}
+
+/* Soft pastel office desk mat in the center */
+.desk-mat {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(640px, 64vw);
+  height: 54px;
+  background: var(--mat-bg);
+  border: 2.5px solid var(--mat-border);
+  border-radius: 14px;
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.65);
+  transition: background 0.5s ease, border-color 0.5s ease;
+}
+
+.desk-front-edge {
+  position: relative;
+  width: 100%;
+  height: 40px;
+  background: linear-gradient(180deg, var(--desk-front-1) 0%, var(--desk-front-2) 100%);
+  border-top: 2.5px solid #6E482B;
+  transition: background 0.5s ease;
+}
+
+.desk-drawer-handle {
+  position: absolute;
+  top: 13px;
+  width: 58px;
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #FFE8B5, #D9A660);
+  border: 2px solid #5A3E32;
+  box-shadow: 0 2px 4px rgba(40, 20, 8, 0.25);
+}
+
+.desk-drawer-handle.left { left: 14%; }
+.desk-drawer-handle.right { right: 14%; }
+
+/* Stage holding Desk Props & Chihuahua sitting ON the desk */
+.desk-items-stage {
+  position: relative;
+  z-index: 6;
+  width: 100%;
+  max-width: 1240px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.desk-left-cluster,
+.desk-right-cluster {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding-bottom: 42px;
+  pointer-events: none;
+}
+
+.prop-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.interactive-prop {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  outline: none;
+}
+
+.interactive-prop:hover {
+  transform: translateY(-5px) scale(1.04);
+}
+
+.interactive-prop:active {
+  transform: translateY(-1px) scale(0.97);
+}
+
+/* Individual Left Props */
+.prop-books-plant {
+  width: 112px;
+  pointer-events: auto;
+  margin-bottom: 2px;
+}
+
+.plant-sway {
+  transform-origin: 63px 45px;
+  animation: gentleSway 4.8s ease-in-out infinite;
+}
+
+@keyframes gentleSway {
+  0%, 100% { transform: rotate(-1.5deg); }
+  50% { transform: rotate(2deg); }
+}
+
+/* Laptop Desk Music Player Wrapper & Popover */
+.laptop-desk-wrap {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  pointer-events: none;
+  margin-left: -10px;
+  margin-bottom: 4px;
+}
+
+.prop-laptop {
+  position: relative;
+  width: 152px;
+  pointer-events: auto;
+}
+
+.laptop-music-notes {
+  position: absolute;
+  top: -18px;
+  right: 16px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.prop-laptop.is-playing .laptop-music-notes {
+  opacity: 1;
+}
+
+.prop-laptop.is-playing .laptop-led {
+  fill: #5BE38A;
+  filter: drop-shadow(0 0 6px rgba(91, 227, 138, 0.95));
+}
+
+.m-note {
+  position: absolute;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #FF6F88;
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.9);
+  animation: musicNoteFloat 2.1s ease-in-out infinite;
+}
+
+.m-note.n2 {
+  left: 16px;
+  top: 6px;
+  color: #F2A24B;
+  animation-delay: 0.9s;
+}
+
+@keyframes musicNoteFloat {
+  0% { opacity: 0; transform: translateY(10px) scale(0.7) rotate(-10deg); }
+  35% { opacity: 1; transform: translateY(-4px) scale(1.06) rotate(8deg); }
+  100% { opacity: 0; transform: translateY(-28px) scale(0.88) rotate(-6deg); }
+}
+
+/* Music Player Popover (uses opacity/visibility so iframe keeps playing when collapsed!) */
+.music-popover {
+  position: absolute;
+  bottom: 112px;
+  left: -12px;
+  width: 326px;
+  padding: 14px 15px;
+  background: #FFFDF8;
+  border: 3px solid #6E4A36;
+  border-radius: 22px;
+  box-shadow: 0 18px 42px rgba(56, 30, 12, 0.32);
+  pointer-events: auto;
+  z-index: 65;
+  transform-origin: 72px bottom;
+  transition: opacity 0.22s ease, transform 0.24s cubic-bezier(0.34, 1.56, 0.64, 1), visibility 0.22s ease;
+}
+
+.music-popover.is-closed {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(12px) scale(0.92);
+}
+
+.music-popover::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 76px;
+  width: 16px;
+  height: 16px;
+  background: #FFFDF8;
+  border-right: 3px solid #6E4A36;
+  border-bottom: 3px solid #6E4A36;
+  transform: rotate(45deg);
+}
+
+.music-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+  margin-bottom: 11px;
+}
+
+.music-tab {
+  padding: 6px 4px;
+  border-radius: 11px;
+  border: 1.8px solid #E5CEB8;
+  background: #FFF7EC;
+  color: #6B4A38;
+  font-family: inherit;
+  font-size: 0.74rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+
+.music-tab.active {
+  background: #FFE2EC;
+  border-color: #FF8DA8;
+  color: #B93558;
+}
+
+.music-panel {
+  display: none;
+}
+
+.music-panel.active {
+  display: block;
+}
+
+.music-subhint {
+  margin: 0 0 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #8E6A56;
+}
+
+.ambient-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 11px;
+}
+
+.ambient-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 9px;
+  border-radius: 13px;
+  background: #FFF6EA;
+  border: 1.6px solid #EBD5BE;
+}
+
+.ambient-toggle {
+  min-width: 114px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1.8px solid #DFC5AE;
+  background: #FFFDF9;
+  color: #5A3E32;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+
+.ambient-toggle.active {
+  background: linear-gradient(135deg, #FF8FA3, #FF6F88);
+  border-color: #E2546E;
+  color: #FFFFFF;
+}
+
+.ambient-slider {
+  flex: 1;
+  accent-color: #FF7C8F;
+  cursor: pointer;
+}
+
+.music-stop-all-btn {
+  width: 100%;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1.8px solid #DFC5AE;
+  background: #FFF6EA;
+  color: #7E5E4E;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.music-stop-all-btn:hover {
+  background: #FFE5EA;
+  border-color: #E6758A;
+  color: #B93558;
+}
+
+/* YouTube / Spotify Embed Tab */
+.embed-form {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.embed-url-input {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 10px;
+  border-radius: 11px;
+  border: 2px solid #E5CEB8;
+  background: #FFFFFF;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #5A3E32;
+  outline: none;
+}
+
+.embed-url-input:focus {
+  border-color: #FF8DA8;
+}
+
+.embed-play-btn {
+  padding: 6px 12px;
+  border-radius: 11px;
+  border: 2px solid #E2546E;
+  background: linear-gradient(135deg, #FF8FA3, #FF6F88);
+  color: #FFFFFF;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.embed-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 9px;
+}
+
+.embed-preset-btn {
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1.5px solid #E5CEB8;
+  background: #FFF6EA;
+  color: #6B4A38;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.embed-preset-btn:hover {
+  background: #FFE2EC;
+  border-color: #FF8DA8;
+  color: #B93558;
+}
+
+.embed-stage {
+  width: 100%;
+  height: 162px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #FFF5E7;
+  border: 2px solid #E5CEB8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.embed-stage iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.embed-placeholder {
+  padding: 16px;
+  text-align: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #9C745D;
+  line-height: 1.45;
+}
+
+.embed-footer-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 7px;
+  gap: 6px;
+}
+
+.embed-note-hint {
+  font-size: 0.69rem;
+  font-weight: 700;
+  color: #9C745D;
+}
+
+.embed-stop-btn {
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1.6px solid #E6758A;
+  background: #FFE5EA;
+  color: #B93558;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.embed-stop-btn[hidden] {
+  display: none;
+}
+
+/* Local MP3 Tab */
+.mp3-upload-btn {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  margin-bottom: 9px;
+  border-radius: 12px;
+  border: 2px dashed #D9A579;
+  background: #FFF6EA;
+  color: #6B4A38;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.16s ease, border-color 0.16s ease;
+}
+
+.mp3-upload-btn:hover {
+  background: #FFE8EF;
+  border-color: #FF8DA8;
+}
+
+.local-audio-player {
+  width: 100%;
+  height: 36px;
+  margin-bottom: 8px;
+}
+
+.mp3-playlist {
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  max-height: 118px;
+  overflow-y: auto;
+  border-radius: 12px;
+  background: #FFF6EA;
+  border: 1.6px solid #EBD5BE;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mp3-empty {
+  padding: 10px 6px;
+  text-align: center;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #9C745D;
+}
+
+.mp3-track-btn {
+  width: 100%;
+  padding: 5px 8px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #5A3E32;
+  font-family: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mp3-track-btn:hover {
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.mp3-track-btn.active {
+  background: #FFE2EC;
+  color: #B93558;
+}
+
+.prop-mug {
+  width: 72px;
+  margin-left: -4px;
+  margin-bottom: 4px;
+}
+
+/* Cute Tomato Pomodoro Desk Timer & Popover */
+.pomodoro-desk-wrap {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  pointer-events: none;
+  margin-left: 8px;
+  margin-bottom: 3px;
+}
+
+.prop-pomodoro {
+  position: relative;
+  width: 82px;
+}
+
+.pomo-mini-status {
+  position: absolute;
+  top: 8px;
+  right: 4px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #9CE0B9;
+  border: 2px solid #5A3E32;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.2s ease;
+  z-index: 4;
+}
+
+.prop-pomodoro.is-running .pomo-mini-status {
+  opacity: 1;
+  transform: scale(1);
+  background: #67D98B;
+  box-shadow: 0 0 8px rgba(103, 217, 139, 0.85);
+  animation: pomoDotPulse 1.2s ease-in-out infinite;
+}
+
+.prop-pomodoro.is-break .pomo-mini-status {
+  background: #7CC8FF;
+  box-shadow: 0 0 8px rgba(124, 200, 255, 0.85);
+}
+
+.prop-pomodoro.is-running .tomato-leaves {
+  transform-origin: 50px 25px;
+  animation: tomatoTickBob 1s ease-in-out infinite;
+}
+
+.prop-pomodoro.is-ringing {
+  animation: clockRing 0.16s ease-in-out infinite alternate;
+}
+
+@keyframes pomoDotPulse {
+  0%, 100% { transform: scale(0.92); opacity: 0.8; }
+  50% { transform: scale(1.2); opacity: 1; }
+}
+
+@keyframes tomatoTickBob {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+
+/* Floating Pomodoro Popover above the Tomato */
+.pomo-popover {
+  position: absolute;
+  bottom: 96px;
+  left: -24px;
+  width: 286px;
+  padding: 15px 16px 14px;
+  background: #FFFDF8;
+  border: 3px solid #6E4A36;
+  border-radius: 22px;
+  box-shadow: 0 18px 40px rgba(56, 30, 12, 0.3);
+  pointer-events: auto;
+  z-index: 60;
+  animation: pomoPopIn 0.24s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.pomo-popover[hidden] {
+  display: none;
+}
+
+.pomo-popover::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 56px;
+  width: 16px;
+  height: 16px;
+  background: #FFFDF8;
+  border-right: 3px solid #6E4A36;
+  border-bottom: 3px solid #6E4A36;
+  transform: rotate(45deg);
+}
+
+@keyframes pomoPopIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.92); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.pomo-pop-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.pomo-pop-title {
+  font-size: 0.96rem;
+  font-weight: 700;
+  color: #5A3E32;
+}
+
+.pomo-pop-close {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1.8px solid #E5CEB8;
+  background: #FFF3E4;
+  color: #5A3E32;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.pomo-pop-close:hover {
+  background: #FF746C;
+  border-color: #D94D46;
+  color: #FFFFFF;
+}
+
+.pomo-modes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+  margin-bottom: 12px;
+}
+
+.pomo-mode-btn {
+  padding: 5px 4px;
+  border-radius: 11px;
+  border: 1.8px solid #E5CEB8;
+  background: #FFF7EC;
+  color: #6B4A38;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+
+.pomo-mode-btn.active {
+  background: #FFE2DF;
+  border-color: #FF746C;
+  color: #B8352E;
+}
+
+.pomo-dial {
+  position: relative;
+  width: 132px;
+  height: 132px;
+  margin: 0 auto 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pomo-ring-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.pomo-ring-track {
+  fill: none;
+  stroke: #F3E3D3;
+  stroke-width: 8;
+}
+
+.pomo-ring-progress {
+  fill: none;
+  stroke: #FF746C;
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-dasharray: 314.16;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.35s linear, stroke 0.25s ease;
+}
+
+.pomo-popover.mode-short .pomo-ring-progress,
+.pomo-popover.mode-long .pomo-ring-progress {
+  stroke: #69C79B;
+}
+
+.pomo-dial-center {
+  text-align: center;
+  z-index: 2;
+}
+
+.pomo-big-time {
+  font-size: 1.72rem;
+  font-weight: 700;
+  color: #5A3E32;
+  line-height: 1.05;
+  letter-spacing: 0.02em;
+}
+
+.pomo-mode-label {
+  margin-top: 3px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #A07258;
+}
+
+.pomo-custom-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.pomo-custom-label,
+.pomo-unit {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #7E5E4E;
+}
+
+.pomo-step-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1.8px solid #DFC5AE;
+  background: #FFF5E8;
+  color: #5A3E32;
+  font-size: 0.96rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.pomo-step-btn:hover {
+  background: #FFE3CA;
+}
+
+.pomo-mins-input {
+  width: 52px;
+  padding: 4px 6px;
+  border-radius: 10px;
+  border: 2px solid #E5CEB8;
+  background: #FFFFFF;
+  text-align: center;
+  font-family: inherit;
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #5A3E32;
+  outline: none;
+}
+
+.pomo-mins-input:focus {
+  border-color: #FF746C;
+}
+
+.pomo-controls {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.pomo-action-btn {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.14s ease, filter 0.14s ease;
+}
+
+.pomo-action-btn:hover {
+  transform: translateY(-1px);
+}
+
+.pomo-action-btn.primary {
+  border: 2px solid #D94E47;
+  background: linear-gradient(135deg, #FF8A7A, #FF665E);
+  color: #FFFFFF;
+  box-shadow: 0 4px 10px rgba(235, 92, 84, 0.3);
+}
+
+.pomo-action-btn.primary.is-paused {
+  border-color: #D49334;
+  background: linear-gradient(135deg, #FFC86B, #F2A541);
+}
+
+.pomo-action-btn.secondary {
+  flex: 0.72;
+  border: 2px solid #DFC5AE;
+  background: #FFF6EA;
+  color: #6B4A38;
+}
+
+.pomo-stats {
+  text-align: center;
+  padding: 6px 10px;
+  border-radius: 12px;
+  background: #FFF5E7;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #7E5E4E;
+}
+
+.pomo-stats strong {
+  color: #D94B43;
+}
+
+.steam-line {
+  animation: steamRise 2.8s ease-in-out infinite;
+}
+.steam-line.s2 {
+  animation-delay: 1.2s;
+}
+
+@keyframes steamRise {
+  0% { opacity: 0; transform: translateY(6px); }
+  45% { opacity: 0.85; }
+  100% { opacity: 0; transform: translateY(-9px); }
+}
+
+/* Individual Right Props */
+.prop-sticky-pad {
+  width: 82px;
+  margin-bottom: 6px;
+}
+
+.prop-trash-bin {
+  position: relative;
+  width: 78px;
+  margin-bottom: 4px;
+}
+
+.trash-count-badge {
+  position: absolute;
+  top: 6px;
+  right: 2px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #FF8FA3, #E64B65);
+  border: 2px solid #FFFDF8;
+  color: #FFFFFF;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 8px rgba(90, 62, 50, 0.25);
+  z-index: 4;
+}
+
+.trash-count-badge[hidden] {
+  display: none;
+}
+
+.trash-lid {
+  transform-origin: 74px 36px;
+  transition: transform 0.24s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.prop-trash-bin:hover .trash-lid {
+  transform: rotate(22deg) translateY(-3px);
+}
+
+.prop-trash-bin.is-sweeping .trash-lid {
+  transform: rotate(52deg) translateY(-6px);
+}
+
+.prop-trash-bin.is-sweeping {
+  animation: trashHop 0.45s ease-in-out 2;
+}
+
+@keyframes trashHop {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-6px) scale(1.06); }
+}
+
+.trash-papers {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.prop-trash-bin.has-done-notes .trash-papers {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Note flying & crumpling into the mini trash bin */
+.sticky-note.flying-to-trash {
+  position: fixed !important;
+  z-index: 88 !important;
+  pointer-events: none;
+  transition:
+    left 0.48s cubic-bezier(0.5, 0.05, 0.6, 1),
+    top 0.48s cubic-bezier(0.5, 0.05, 0.6, 1),
+    transform 0.48s cubic-bezier(0.5, 0.05, 0.6, 1),
+    opacity 0.45s ease !important;
+}
+
+/* Trash confirmation modal styling */
+.trash-confirm-modal {
+  max-width: 410px;
+}
+
+.trash-confirm-desc {
+  margin: 0 0 12px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.45;
+  color: #5A3E32;
+}
+
+.trash-preview-list {
+  list-style: none;
+  margin: 0 0 18px;
+  padding: 10px 12px;
+  max-height: 185px;
+  overflow-y: auto;
+  background: #FFF5E7;
+  border: 2px dashed #DFC2A4;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.trash-preview-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 9px;
+  border-radius: 10px;
+  background: #FFFDF9;
+  border: 1.5px solid rgba(90, 62, 50, 0.14);
+  font-family: 'Mali', cursive;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: #5A3E32;
+}
+
+.trash-preview-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 1.5px solid rgba(90, 62, 50, 0.35);
+}
+
+.prop-desk-clock {
+  position: relative;
+  pointer-events: auto;
+  margin-bottom: 10px;
+  margin-left: 4px;
+}
+
+.clock-ears {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 11px;
+  margin-bottom: -5px;
+}
+
+.clock-ears span {
+  width: 13px;
+  height: 11px;
+  background: #FFACC5;
+  border: 2.2px solid #5A3E32;
+  border-radius: 50% 50% 0 0;
+}
+
+.clock-body {
+  background: #FFF9F0;
+  border: 2.6px solid #5A3E32;
+  border-radius: 14px;
+  padding: 6px 11px;
+  text-align: center;
+  box-shadow: 0 5px 0 rgba(90, 62, 50, 0.18);
+  min-width: 76px;
+}
+
+.clock-time {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #5A3E32;
+  line-height: 1.1;
+  letter-spacing: 0.03em;
+}
+
+.clock-date {
+  margin-top: 2px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  color: #B47858;
+}
+
+.clock-next-alarm {
+  margin-top: 3px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #FFE5EA;
+  color: #C73A54;
+  font-size: 0.62rem;
+  font-weight: 700;
+}
+
+.clock-next-alarm[hidden] {
+  display: none;
+}
+
+.prop-desk-clock.is-ringing {
+  animation: clockRing 0.16s ease-in-out infinite alternate;
+}
+
+.prop-desk-clock.is-ringing .clock-body {
+  border-color: #E64B65;
+  box-shadow: 0 0 16px rgba(255, 111, 136, 0.58), 0 5px 0 rgba(90, 62, 50, 0.18);
+}
+
+@keyframes clockRing {
+  0% { transform: rotate(-6deg) translateY(-2px); }
+  100% { transform: rotate(6deg) translateY(-4px); }
+}
+
+/* Cute Floating Reminder Alarm Toast */
+.alarm-toast {
+  position: fixed;
+  top: 72px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 95;
+  width: min(390px, calc(100vw - 24px));
+  padding: 14px 16px;
+  background: #FFFDF7;
+  border: 3px solid #EE5D75;
+  border-radius: 20px;
+  box-shadow: 0 16px 38px rgba(72, 24, 34, 0.32);
+  animation: alarmDropIn 0.34s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.alarm-toast[hidden] {
+  display: none;
+}
+
+@keyframes alarmDropIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(-18px) scale(0.92); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+}
+
+.alarm-toast-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.alarm-bell-icon {
+  display: inline-block;
+  font-size: 1.2rem;
+  animation: bellShake 0.45s ease-in-out infinite alternate;
+}
+
+@keyframes bellShake {
+  0% { transform: rotate(-16deg); }
+  100% { transform: rotate(16deg); }
+}
+
+.alarm-toast-title {
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: #C7344E;
+  flex: 1;
+}
+
+.alarm-toast-time {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: #FFE5EA;
+  color: #C7344E;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.alarm-toast-text {
+  margin: 0 0 12px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: #FFF6E9;
+  font-family: 'Mali', cursive;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #4D3327;
+  line-height: 1.38;
+}
+
+.alarm-toast-actions {
+  display: flex;
+  gap: 7px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.alarm-btn {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.14s ease, filter 0.14s ease;
+}
+
+.alarm-btn:hover {
+  transform: translateY(-1px);
+}
+
+.alarm-btn.done {
+  background: linear-gradient(135deg, #FF8FA3, #FF6D86);
+  border-color: #DF526B;
+  color: #FFFFFF;
+}
+
+.alarm-btn.snooze {
+  background: #FFF1CC;
+  border-color: #D9A24B;
+  color: #7B4E14;
+}
+
+.alarm-btn.dismiss {
+  background: #FFF6EA;
+  border-color: #DFC5AE;
+  color: #6B4A38;
+}
+
+.prop-desk-lamp {
+  width: 102px;
+  margin-bottom: 2px;
+  margin-left: -4px;
+}
+
+body.theme-night .lamp-bulb-svg {
+  fill: #FFF399;
+  filter: drop-shadow(0 0 12px rgba(255, 224, 112, 0.95));
+}
+
+/* ==========================================================================
+   CENTER STAR: Chibi Chihuahua sitting at the Office Desk
+   ========================================================================== */
+
+.chihuahua-station {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 34px;
+  pointer-events: none;
+  z-index: 8;
+}
+
+/* Cute Speech Bubble above Chihuahua */
+.chi-speech-bubble {
+  position: absolute;
+  bottom: 230px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 272px;
+  width: max-content;
+  padding: 8px 14px;
+  background: #FFFDF8;
+  border: 2.4px solid #5A3E32;
+  border-radius: 18px;
+  box-shadow: 0 6px 16px rgba(72, 42, 18, 0.18);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #5A3E32;
+  text-align: center;
+  line-height: 1.35;
+  cursor: pointer;
+  pointer-events: auto;
+  animation: bubbleFloat 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.chi-speech-bubble::before {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 10px 9px 0 9px;
+  border-style: solid;
+  border-color: #5A3E32 transparent transparent transparent;
+}
+
+.chi-speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -6.5px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 8px 7px 0 7px;
+  border-style: solid;
+  border-color: #FFFDF8 transparent transparent transparent;
+}
+
+.chi-speech-bubble.is-hidden {
+  opacity: 0;
+  transform: translateX(-50%) translateY(8px) scale(0.92);
+  pointer-events: none;
+}
+
+@keyframes bubbleFloat {
+  0% { opacity: 0; transform: translateX(-50%) translateY(10px) scale(0.85); }
+  100% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+}
+
+/* Floating hearts & sparkles layer */
+.chi-fx-layer {
+  position: absolute;
+  inset: -40px -30px 40px -30px;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 12;
+}
+
+.chi-fx-particle {
+  position: absolute;
+  font-size: 1.2rem;
+  animation: particleFloatUp 1.15s ease-out forwards;
+  pointer-events: none;
+}
+
+.chi-bark-pop {
+  position: absolute;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: #FFF9E6;
+  border: 2.2px solid #5A3E32;
+  color: #D94862;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.86rem;
+  font-weight: 700;
+  box-shadow: 0 3px 8px rgba(90, 62, 50, 0.22);
+  white-space: nowrap;
+  pointer-events: none;
+  animation: barkPopOut 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes barkPopOut {
+  0% { opacity: 0; transform: translate(0, 4px) scale(0.45) rotate(-12deg); }
+  25% { opacity: 1; transform: translate(var(--bx, 18px), -14px) scale(1.12) rotate(var(--br, 8deg)); }
+  100% { opacity: 0; transform: translate(calc(var(--bx, 18px) * 1.6), -42px) scale(0.95) rotate(var(--br, 8deg)); }
+}
+
+@keyframes particleFloatUp {
+  0% { opacity: 0; transform: translateY(10px) scale(0.5) rotate(-10deg); }
+  22% { opacity: 1; transform: translateY(-10px) scale(1.1) rotate(8deg); }
+  100% { opacity: 0; transform: translateY(-70px) scale(0.9) rotate(-8deg); }
+}
+
+/* Chibi Chihuahua Interactive Button */
+.chihuahua-avatar {
+  position: relative;
+  width: 212px;
+  margin-bottom: -14px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: none;
+  outline: none;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.chihuahua-avatar:hover {
+  transform: scale(1.03);
+}
+
+.chihuahua-avatar:active {
+  transform: scale(0.97) translateY(2px);
+}
+
+.chihuahua-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 6px 10px rgba(72, 42, 18, 0.14));
+}
+
+/* Chihuahua SVG Animations */
+.chi-head-group {
+  transform-origin: 130px 145px;
+  animation: chiBreathe 3.4s ease-in-out infinite;
+}
+
+@keyframes chiBreathe {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-2.6px) rotate(0.8deg); }
+}
+
+.chi-tail {
+  transform-origin: 174px 172px;
+  animation: chiTailWag 1.6s ease-in-out infinite;
+}
+
+@keyframes chiTailWag {
+  0%, 100% { transform: rotate(-6deg); }
+  50% { transform: rotate(10deg); }
+}
+
+.chi-ear-left {
+  transform-origin: 82px 86px;
+  animation: chiEarLeft 5.6s ease-in-out infinite;
+}
+
+.chi-ear-right {
+  transform-origin: 178px 86px;
+  animation: chiEarRight 6.4s ease-in-out infinite;
+}
+
+@keyframes chiEarLeft {
+  0%, 84%, 100% { transform: rotate(0deg); }
+  88% { transform: rotate(-9deg); }
+  92% { transform: rotate(3deg); }
+  96% { transform: rotate(-5deg); }
+}
+
+@keyframes chiEarRight {
+  0%, 80%, 100% { transform: rotate(0deg); }
+  85% { transform: rotate(8deg); }
+  90% { transform: rotate(-2deg); }
+}
+
+/* Blinking Eyelids */
+.chi-eyelid {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+  transform: scaleY(0);
+  animation: chiBlink 4.2s ease-in-out infinite;
+}
+
+@keyframes chiBlink {
+  0%, 92%, 100% { transform: scaleY(0); }
+  95%, 97% { transform: scaleY(1); }
+}
+
+/* Eyes & Tongue States */
+.chi-eyes-happy {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.chi-tongue {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+  transform: scaleY(0.2);
+  transition: all 0.2s ease;
+}
+
+/* Happy / Celebrate / Blush Moods */
+.chihuahua-avatar.mood-happy .chi-eyes-normal,
+.chihuahua-avatar.mood-blush .chi-eyes-normal {
+  opacity: 0;
+}
+
+.chihuahua-avatar.mood-happy .chi-eyes-happy,
+.chihuahua-avatar.mood-blush .chi-eyes-happy {
+  opacity: 1;
+}
+
+.chihuahua-avatar.mood-happy .chi-tongue {
+  opacity: 1;
+  transform: scaleY(1);
+}
+
+.chihuahua-avatar.mood-happy .chi-tail,
+.chihuahua-avatar.mood-excited .chi-tail {
+  animation-duration: 0.35s;
+}
+
+.chihuahua-avatar.mood-happy,
+.chihuahua-avatar.mood-excited {
+  animation: chiHappyBounce 0.55s ease-in-out 2;
+}
+
+.chihuahua-avatar.mood-blush .chi-blush {
+  opacity: 0.9;
+}
+
+@keyframes chiHappyBounce {
+  0%, 100% { transform: translateY(0); }
+  45% { transform: translateY(-13px) scale(1.03); }
+}
+
+/* Drag overlay so sticky notes can glide smoothly off the corkboard into Chihuahua's mouth */
+.drag-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 80;
+}
+
+.drag-overlay .sticky-note {
+  pointer-events: auto;
+}
+
+.sticky-note.over-mouth {
+  box-shadow:
+    0 0 0 3px rgba(255, 124, 143, 0.72),
+    0 12px 24px rgba(238, 93, 117, 0.32);
+  filter: brightness(1.03);
+}
+
+.sticky-note.being-eaten {
+  transition: transform 0.24s cubic-bezier(0.55, 0.06, 0.68, 0.19), opacity 0.24s ease !important;
+  transform: scale(0.12) rotate(24deg) !important;
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+/* Mouth states: Normal vs Wide Open (ready to eat note) vs Chewing */
+.chi-mouth-open,
+.chi-mouth-chew {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: 50% 40%;
+  transform: scale(0.4);
+  transition: opacity 0.16s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.chi-mouth-normal {
+  transition: opacity 0.14s ease;
+}
+
+/* EAT READY: Chihuahua opens mouth wide when a dragged sticky note approaches! */
+.chihuahua-avatar.mood-eat-ready .chi-mouth-normal {
+  opacity: 0;
+}
+
+.chihuahua-avatar.mood-eat-ready .chi-mouth-open {
+  opacity: 1;
+  transform: scale(1.06);
+  animation: chiMouthAah 0.55s ease-in-out infinite alternate;
+}
+
+.chihuahua-avatar.mood-eat-ready .chi-head-group {
+  animation: chiLeanForFood 0.35s ease-out forwards;
+}
+
+.chihuahua-avatar.mood-eat-ready .chi-tail {
+  animation-duration: 0.28s;
+}
+
+.chihuahua-avatar.mood-eat-ready .chi-ear-left {
+  transform: rotate(-11deg);
+  transition: transform 0.2s ease;
+}
+
+.chihuahua-avatar.mood-eat-ready .chi-ear-right {
+  transform: rotate(11deg);
+  transition: transform 0.2s ease;
+}
+
+.chihuahua-avatar.mood-eat-ready .chihuahua-svg {
+  filter: drop-shadow(0 0 18px rgba(255, 134, 158, 0.65));
+}
+
+@keyframes chiMouthAah {
+  0% { transform: scale(0.98, 0.96); }
+  100% { transform: scale(1.1, 1.12); }
+}
+
+@keyframes chiLeanForFood {
+  0% { transform: translateY(0) scale(1); }
+  100% { transform: translateY(-4px) scale(1.04); }
+}
+
+/* CHEWING: Chihuahua munches happily right after eating the deleted note! */
+.chihuahua-avatar.mood-chewing .chi-mouth-normal,
+.chihuahua-avatar.mood-chewing .chi-mouth-open {
+  opacity: 0;
+}
+
+.chihuahua-avatar.mood-chewing .chi-mouth-chew {
+  opacity: 1;
+  transform: scale(1);
+  animation: chiMunch 0.22s ease-in-out infinite alternate;
+}
+
+.chihuahua-avatar.mood-chewing .chi-eyes-normal {
+  opacity: 0;
+}
+
+.chihuahua-avatar.mood-chewing .chi-eyes-happy {
+  opacity: 1;
+}
+
+.chihuahua-avatar.mood-chewing .chi-blush {
+  opacity: 0.88;
+}
+
+.chihuahua-avatar.mood-chewing .chi-tail {
+  animation-duration: 0.32s;
+}
+
+.chihuahua-avatar.mood-chewing .chi-head-group {
+  animation: chiChewHead 0.24s ease-in-out infinite alternate;
+}
+
+@keyframes chiMunch {
+  0% { transform: scale(0.85, 0.72); }
+  100% { transform: scale(1.15, 1.18); }
+}
+
+@keyframes chiChewHead {
+  0% { transform: translateY(0px) rotate(-1.5deg); }
+  100% { transform: translateY(2.5px) rotate(1.5deg); }
+}
+
+/* Composer custom tag input, live preview & daily reminder time picker */
+.composer-meta-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.composer-tag-preview {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(90, 62, 50, 0.18);
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #6B4A38;
+}
+
+.composer-time-preview {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: rgba(255, 232, 238, 0.88);
+  border: 1px solid rgba(226, 84, 110, 0.34);
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #C7344E;
+}
+
+.composer-time-preview[hidden] {
+  display: none;
+}
+
+.time-input-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.time-input {
+  padding: 6px 12px;
+  border-radius: 12px;
+  border: 2px solid #E5CEB8;
+  background: #FFFDF9;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #5A3E32;
+  outline: none;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.time-input:focus {
+  border-color: #FF8FA3;
+  box-shadow: 0 0 0 3px rgba(255, 143, 163, 0.22);
+}
+
+.time-clear-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.8px solid #E5CEB8;
+  background: #FFF3E4;
+  color: #7E5E4E;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.time-clear-btn:hover {
+  background: #FF7C8F;
+  border-color: #D94D68;
+  color: #FFFFFF;
+}
+
+.time-clear-btn[hidden] {
+  display: none;
+}
+
+.time-quick-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.time-quick-pill {
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1.6px solid #E5CEB8;
+  background: #FFF6EA;
+  color: #6B4A38;
+  font-family: inherit;
+  font-size: 0.74rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.time-quick-pill:hover {
+  background: #FFE5EA;
+  border-color: #EE889B;
+  color: #B9324B;
+}
+
+.option-row-stack {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 7px;
+}
+
+.option-input-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tag-text-input {
+  flex: 1;
+  padding: 7px 12px;
+  border-radius: 12px;
+  border: 2px solid #E5CEB8;
+  background: #FFFDF9;
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #5A3E32;
+  outline: none;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.tag-text-input:focus {
+  border-color: #FF8FA3;
+  box-shadow: 0 0 0 3px rgba(255, 143, 163, 0.22);
+}
+
+.tag-suggestions-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-left: 84px;
+}
+
+.suggest-hint {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: rgba(126, 94, 78, 0.8);
+}
+
+/* Floating Petting Hand over Chihuahua's head */
+.petting-hand {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 90;
+  font-size: 1.9rem;
+  line-height: 1;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.75);
+  transition: opacity 0.14s ease;
+  filter: drop-shadow(0 4px 8px rgba(90, 62, 50, 0.26));
+}
+
+.petting-hand.visible {
+  opacity: 1;
+}
+
+.chihuahua-avatar.is-pet-zone {
+  cursor: none;
+  touch-action: none;
+}
+
+/* PETTING MOOD: Happy head-rub squash, ear relax, closed eyes & tilt following hand! */
+.chihuahua-avatar.mood-petting .chi-eyes-normal {
+  opacity: 0;
+}
+
+.chihuahua-avatar.mood-petting .chi-eyes-happy {
+  opacity: 1;
+}
+
+.chihuahua-avatar.mood-petting .chi-blush {
+  opacity: 0.95;
+}
+
+.chihuahua-avatar.mood-petting .chi-tongue {
+  opacity: 1;
+  transform: scaleY(0.85);
+}
+
+.chihuahua-avatar.mood-petting .chi-head-group {
+  animation: none;
+  transform: translateY(3px) scale(1.03, 0.95) rotate(var(--pet-tilt, 0deg));
+  transition: transform 0.12s ease-out;
+}
+
+.chihuahua-avatar.mood-petting .chi-ear-left {
+  animation: none;
+  transform: rotate(-14deg) translateY(3px);
+  transition: transform 0.18s ease;
+}
+
+.chihuahua-avatar.mood-petting .chi-ear-right {
+  animation: none;
+  transform: rotate(14deg) translateY(3px);
+  transition: transform 0.18s ease;
+}
+
+.chihuahua-avatar.mood-petting .chi-tail {
+  animation-duration: 0.28s;
+}
+
+/* BARK MOOD: Crisp double-bark ("Gâu! Gâu!") mouth snap, ear perk & head hop! */
+.chihuahua-avatar.mood-bark .chi-mouth-normal {
+  opacity: 0;
+}
+
+.chihuahua-avatar.mood-bark .chi-mouth-open {
+  opacity: 1;
+  animation: chiBarkMouth 0.21s ease-in-out 2;
+}
+
+.chihuahua-avatar.mood-bark .chi-head-group {
+  animation: chiBarkHead 0.21s ease-in-out 2;
+}
+
+.chihuahua-avatar.mood-bark .chi-ear-left {
+  animation: chiBarkEarL 0.21s ease-in-out 2;
+}
+
+.chihuahua-avatar.mood-bark .chi-ear-right {
+  animation: chiBarkEarR 0.21s ease-in-out 2;
+}
+
+.chihuahua-avatar.mood-bark .chi-tail {
+  animation-duration: 0.26s;
+}
+
+@keyframes chiBarkMouth {
+  0%, 100% { transform: scale(0.35, 0.25); }
+  45% { transform: scale(0.92, 0.92); }
+}
+
+@keyframes chiBarkHead {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  45% { transform: translateY(-7px) rotate(-3deg); }
+}
+
+@keyframes chiBarkEarL {
+  0%, 100% { transform: rotate(0deg); }
+  45% { transform: rotate(-14deg); }
+}
+
+@keyframes chiBarkEarR {
+  0%, 100% { transform: rotate(0deg); }
+  45% { transform: rotate(14deg); }
+}
+
+/* Chihuahua Pastel Over-Ear Headphones (shown automatically while music plays!) */
+.chi-headphones {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.95);
+  transform-origin: 130px 76px;
+  transition: opacity 0.28s ease, transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+}
+
+.chihuahua-avatar.is-grooving .chi-headphones {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.chihuahua-avatar.is-grooving.mood-idle .chi-head-group {
+  animation: chiMusicGroove 1.35s ease-in-out infinite;
+}
+
+@keyframes chiMusicGroove {
+  0%, 100% { transform: translateY(0px) rotate(-3.2deg); }
+  25% { transform: translateY(-3px) rotate(0deg); }
+  50% { transform: translateY(0px) rotate(3.2deg); }
+  75% { transform: translateY(-3px) rotate(0deg); }
+}
+
+/* Optional Glasses Toggle */
+.chihuahua-avatar.glasses-hidden .chi-glasses {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+.chi-glasses {
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+/* Office Desk Nameplate */
+.desk-nameplate {
+  position: relative;
+  z-index: 9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px 18px 4px;
+  background: linear-gradient(180deg, #FFF7E4, #F3D9A6);
+  border: 2.4px solid #5A3E32;
+  border-radius: 10px;
+  box-shadow: 0 4px 0 #9F6B3E, 0 6px 12px rgba(56, 30, 12, 0.22);
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform 0.16s ease;
+}
+
+.desk-nameplate:hover {
+  transform: translateY(-2px);
+}
+
+.nameplate-role {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #5A3E32;
+}
+
+.nameplate-sub {
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: #8A5D41;
+}
+
+/* ==========================================================================
+   Modal Composer for New Sticky Note
+   ========================================================================== */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(52, 34, 24, 0.45);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: fadeIn 0.2s ease;
+}
+
+.modal-backdrop[hidden] {
+  display: none;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.note-modal {
+  width: 100%;
+  max-width: 440px;
+  max-height: 90dvh;
+  overflow-y: auto;
+  background: #FFFBF4;
+  border: 3px solid #6E4A36;
+  border-radius: 24px;
+  padding: 20px 22px;
+  box-shadow: 0 22px 48px rgba(42, 22, 12, 0.34);
+  animation: modalPop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modalPop {
+  from { opacity: 0; transform: scale(0.88) translateY(16px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  color: #5A3E32;
+}
+
+.modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid #E5CEB8;
+  background: #FFF3E4;
+  color: #5A3E32;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+
+.modal-close:hover {
+  background: #FF7C8F;
+  border-color: #D94D68;
+  color: #FFFFFF;
+}
+
+.modal-preview-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.composer-paper {
+  position: relative;
+  width: 100%;
+  padding: 22px 16px 12px;
+  border-radius: 8px 8px 22px 8px;
+  border: 2px solid rgba(90, 62, 50, 0.25);
+  box-shadow: 4px 8px 16px rgba(72, 42, 18, 0.16);
+  transition: background 0.2s ease;
+}
+
+.composer-paper.color-yellow { background: var(--note-yellow); }
+.composer-paper.color-pink { background: var(--note-pink); }
+.composer-paper.color-mint { background: var(--note-mint); }
+.composer-paper.color-blue { background: var(--note-blue); }
+.composer-paper.color-lavender { background: var(--note-lavender); }
+.composer-paper.color-peach { background: var(--note-peach); }
+
+.composer-pin-preview {
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #FF96A7, #E64B65);
+  border: 2px solid #5A3E32;
+  transition: all 0.2s ease;
+}
+
+.composer-pin-preview.is-tape {
+  width: 68px;
+  height: 18px;
+  border-radius: 2px;
+  border: 1px dashed rgba(90, 62, 50, 0.28);
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.7),
+    rgba(255, 255, 255, 0.7) 5px,
+    rgba(255, 166, 193, 0.6) 5px,
+    rgba(255, 166, 193, 0.6) 10px
+  );
+}
+
+#note-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  resize: none;
+  outline: none;
+  font-family: 'Mali', cursive;
+  font-size: 1.02rem;
+  font-weight: 600;
+  line-height: 1.42;
+  color: #4D3327;
+}
+
+#note-input::placeholder {
+  color: rgba(90, 62, 50, 0.48);
+}
+
+.composer-paper-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.multiline-hint {
+  font-size: 0.69rem;
+  font-weight: 700;
+  color: rgba(90, 62, 50, 0.56);
+}
+
+.char-count {
+  text-align: right;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: rgba(90, 62, 50, 0.5);
+  flex-shrink: 0;
+}
+
+.composer-options {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  margin-bottom: 18px;
+}
+
+.option-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.option-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+  min-width: 74px;
+}
+
+.color-swatches {
+  display: flex;
+  gap: 8px;
+}
+
+.swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--sw);
+  border: 2.4px solid rgba(90, 62, 50, 0.35);
+  cursor: pointer;
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+.swatch:hover {
+  transform: scale(1.12);
+}
+
+.swatch.active {
+  border-color: #5A3E32;
+  box-shadow: 0 0 0 3px #FFFBF4, 0 0 0 5px #FF7C8F;
+  transform: scale(1.08);
+}
+
+.tag-pills, .pin-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag-pill, .pin-pill {
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1.8px solid #E5CEB8;
+  background: #FFF6EA;
+  color: #5A3E32;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tag-pill.active, .pin-pill.active {
+  background: #FFE2B3;
+  border-color: #C78246;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.modal-btn {
+  padding: 9px 18px;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.modal-btn:hover {
+  transform: translateY(-1px);
+}
+
+.modal-btn.secondary {
+  border: 2px solid #DFC5AE;
+  background: #FFF6EA;
+  color: #6B4A38;
+}
+
+.modal-btn.primary {
+  border: 2px solid #DF526B;
+  background: linear-gradient(135deg, #FF8FA3, #FF6D86);
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(238, 93, 117, 0.32);
+}
+
+/* ==========================================================================
+   Responsive Adjustments (Tablet & Mobile Phones)
+   ========================================================================== */
+
+@media (max-width: 1040px) {
+  .prop-books-plant,
+  .prop-desk-clock {
+    display: none;
+  }
+
+  .prop-laptop {
+    width: 124px;
+  }
+
+  .prop-pomodoro {
+    width: 70px;
+  }
+
+  .prop-trash-bin {
+    width: 68px;
+  }
+
+  .prop-desk-lamp {
+    width: 88px;
+  }
+
+  .chihuahua-avatar {
+    width: 180px;
+  }
+
+  .chi-speech-bubble {
+    bottom: 202px;
+    max-width: 240px;
+    font-size: 0.78rem;
+  }
+}
+
+@media (max-width: 720px) {
+  /* Compact, non-wrapping 2-row mobile toolbar */
+  .wall-toolbar {
+    padding: 8px 10px 6px;
+    gap: 6px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .brand-group {
+    width: 100%;
+    justify-content: space-between;
+    gap: 6px;
+    flex-wrap: nowrap;
+  }
+
+  .brand-badge {
+    padding: 5px 11px;
+    gap: 5px;
+    white-space: nowrap;
+  }
+
+  .brand-title {
+    font-size: 0.92rem;
+    white-space: nowrap;
+  }
+
+  .progress-pill {
+    padding: 5px 10px;
+    gap: 6px;
+    white-space: nowrap;
+  }
+
+  .progress-bar-track {
+    width: 44px;
+    height: 7px;
+  }
+
+  .progress-text {
+    font-size: 0.74rem;
+  }
+
+  .toolbar-controls {
+    width: 100%;
+    justify-content: space-between;
+    gap: 5px;
+    flex-wrap: nowrap;
+  }
+
+  .filter-group {
+    padding: 2px;
+    flex: 1;
+    justify-content: space-between;
+  }
+
+  .filter-btn {
+    padding: 5px 7px;
+    font-size: 0.74rem;
+    white-space: nowrap;
+    flex: 1;
+    text-align: center;
+  }
+
+  .btn-label {
+    display: none;
+  }
+
+  .tool-btn,
+  .icon-btn {
+    padding: 6px 9px;
+    font-size: 0.88rem;
+    flex-shrink: 0;
+  }
+
+  /* Corkboard fills vertical viewport nicely above compact mobile desk */
+  .board-stage {
+    padding: 2px 8px 94px;
+  }
+
+  .corkboard-frame {
+    padding: 8px;
+    border-radius: 16px;
+  }
+
+  .fairy-lights-svg {
+    height: 44px;
+  }
+
+  .polaroid-decor,
+  .mini-card-decor,
+  .board-tip {
+    display: none;
+  }
+
+  /* Clean zero-overlap 2-column responsive note grid on mobile! */
+  .notes-layer {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 16px 10px;
+    padding: 46px 10px 128px;
+    min-height: 100% !important;
+  }
+
+  .notes-layer .sticky-note {
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    width: 100%;
+    min-height: 122px;
+    padding: 20px 9px 10px;
+    gap: 6px;
+    touch-action: pan-y;
+  }
+
+  .notes-layer .sticky-note .note-header {
+    touch-action: none;
+  }
+
+  .sticky-note .note-actions {
+    opacity: 0.88;
+  }
+
+  .note-mini-btn {
+    width: 21px;
+    height: 21px;
+    font-size: 0.72rem;
+  }
+
+  .note-tag {
+    font-size: 0.64rem;
+    padding: 2px 6px;
+    max-width: 92px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .note-text {
+    font-size: 0.82rem;
+    line-height: 1.32;
+  }
+
+  .note-check-btn {
+    width: 18px;
+    height: 18px;
+    font-size: 0.66rem;
+  }
+
+  .note-checklist {
+    max-height: 138px;
+  }
+
+  .note-rubber-stamp {
+    width: 68px;
+    height: 68px;
+    bottom: 6px;
+    right: 6px;
+  }
+
+  .note-stamper-prop {
+    width: 64px;
+    height: 74px;
+    bottom: 8px;
+    right: 6px;
+  }
+
+  /* Compact Mobile Office Desk — ALL core interactive props fit cleanly! */
+  .desk-foreground {
+    height: 176px;
+  }
+
+  .office-desk {
+    height: 86px;
+  }
+
+  .desk-surface {
+    height: 58px;
+  }
+
+  .desk-mat {
+    top: 8px;
+    width: 78vw;
+    height: 40px;
+    border-radius: 10px;
+  }
+
+  .desk-front-edge {
+    height: 28px;
+  }
+
+  .desk-drawer-handle {
+    top: 8px;
+    width: 40px;
+    height: 8px;
+  }
+
+  .desk-items-stage {
+    padding: 0 8px;
+    gap: 2px;
+  }
+
+  .desk-left-cluster,
+  .desk-right-cluster {
+    gap: 4px;
+    padding-bottom: 28px;
+    align-items: flex-end;
+  }
+
+  /* Keep Laptop (Music), Pomodoro (Tomato), Trash Bin, and Desk Lamp all accessible on mobile! */
+  .prop-mug,
+  .prop-sticky-pad,
+  .prop-desk-clock,
+  .prop-books-plant {
+    display: none;
+  }
+
+  .laptop-desk-wrap {
+    margin-left: 0;
+    margin-bottom: 2px;
+  }
+
+  .prop-laptop {
+    display: block;
+    width: 62px;
+  }
+
+  .pomodoro-desk-wrap {
+    margin-left: 2px;
+    margin-bottom: 1px;
+  }
+
+  .prop-pomodoro {
+    width: 50px;
+  }
+
+  .prop-trash-bin {
+    width: 48px;
+    margin-bottom: 1px;
+  }
+
+  .trash-count-badge {
+    top: 1px;
+    right: -2px;
+    min-width: 18px;
+    height: 18px;
+    font-size: 0.64rem;
+    padding: 0 4px;
+  }
+
+  .prop-desk-lamp {
+    width: 56px;
+    margin-left: 0;
+    margin-bottom: 0;
+  }
+
+  .chihuahua-station {
+    padding-bottom: 20px;
+  }
+
+  .chihuahua-avatar {
+    width: 126px;
+    margin-bottom: -10px;
+  }
+
+  .desk-nameplate {
+    padding: 3px 10px;
+    border-width: 2px;
+    border-radius: 8px;
+    box-shadow: 0 3px 0 #9F6B3E, 0 4px 8px rgba(56, 30, 12, 0.2);
+  }
+
+  .nameplate-role {
+    font-size: 0.62rem;
+    white-space: nowrap;
+  }
+
+  .nameplate-sub {
+    display: none;
+  }
+
+  .chi-speech-bubble {
+    bottom: 144px;
+    max-width: min(252px, calc(100vw - 28px));
+    padding: 6px 11px;
+    font-size: 0.74rem;
+  }
+
+  /* Center Music & Pomodoro Popovers cleanly on mobile screens */
+  .music-popover,
+  .pomo-popover {
+    position: fixed;
+    left: 50%;
+    right: auto;
+    bottom: 108px;
+    width: min(352px, calc(100vw - 20px));
+    max-height: calc(100dvh - 154px);
+    overflow-y: auto;
+    transform: translateX(-50%);
+    transform-origin: center bottom;
+  }
+
+  .music-popover.is-closed {
+    transform: translateX(-50%) translateY(12px) scale(0.92);
+  }
+
+  .music-popover::after,
+  .pomo-popover::after {
+    display: none;
+  }
+
+  .embed-stage {
+    height: 152px;
+  }
+
+  /* Modal Composer polish on narrow mobile screens */
+  .note-modal {
+    padding: 16px 15px;
+    border-radius: 20px;
+  }
+
+  .option-row {
+    gap: 6px;
+  }
+
+  .option-label {
+    min-width: 64px;
+    font-size: 0.78rem;
+  }
+
+  .tag-suggestions-wrap {
+    padding-left: 0;
+  }
+
+  .alarm-toast {
+    top: 96px;
+  }
+}
+
+@media (max-width: 360px) {
+  .notes-layer {
+    grid-template-columns: 1fr;
+  }
+
+  .prop-laptop {
+    width: 54px;
+  }
+
+  .prop-pomodoro {
+    width: 44px;
+  }
+
+  .prop-trash-bin {
+    width: 42px;
+  }
+
+  .prop-desk-lamp {
+    width: 48px;
+  }
+
+  .chihuahua-avatar {
+    width: 112px;
+  }
+}

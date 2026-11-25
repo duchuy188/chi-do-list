@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chi-Do List 🐾 — Bảng Note Văn Phòng Của Chihuahua</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Mali:ital,wght@0,500;0,600;0,700;1,500&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="theme-day">
+  <div class="room-scene" id="room-scene">
+    <!-- Cozy ambient sunlit window rays (day) / starry glow (night) -->
+    <div class="wall-ambient" aria-hidden="true">
+      <div class="sun-ray ray-1"></div>
+      <div class="sun-ray ray-2"></div>
+      <div class="night-stars"></div>
+    </div>
+
+    <!-- Top Toolbar neatly mounted on the office wall -->
+    <header class="wall-toolbar">
+      <div class="brand-group">
+        <div class="brand-badge">
+          <span class="brand-paw">🐾</span>
+          <span class="brand-title">Chi-Do List</span>
+        </div>
+        <div class="progress-pill" id="progress-pill" title="Tiến độ công việc hôm nay">
+          <span class="progress-bar-track">
+            <span class="progress-bar-fill" id="progress-bar-fill"></span>
+          </span>
+          <span class="progress-text" id="progress-text">0/0 xong</span>
+        </div>
+      </div>
+
+      <nav class="toolbar-controls" aria-label="Bộ lọc và hành động">
+        <div class="filter-group" role="tablist">
+          <button class="filter-btn active" data-filter="all" role="tab" aria-selected="true">Tất cả</button>
+          <button class="filter-btn" data-filter="active" role="tab" aria-selected="false">Đang làm</button>
+          <button class="filter-btn" data-filter="done" role="tab" aria-selected="false">Đã xong</button>
+        </div>
+
+        <button class="tool-btn" id="btn-tidy" title="Sắp xếp lại các tờ note gọn gàng">
+          <span>✨</span><span class="btn-label">Xếp gọn</span>
+        </button>
+
+        <button class="tool-btn primary-btn" id="btn-add-note" title="Dán một tờ note mới lên bảng">
+          <span>📌</span><span class="btn-label">Dán note</span>
+        </button>
+
+        <button class="icon-btn" id="btn-sound" title="Bật / tắt âm thanh dễ thương" aria-label="Bật hoặc tắt âm thanh">
+          🔊
+        </button>
+
+        <button class="icon-btn" id="btn-theme" title="Chuyển chế độ Ban ngày / Ban đêm ấm áp" aria-label="Đổi chế độ sáng tối">
+          ☀️
+        </button>
+      </nav>
+    </header>
+
+    <!-- LAYER 2 (BACK): Wooden Corkboard for Sticky Notes -->
+    <main class="board-stage">
+      <section class="corkboard-frame" id="corkboard-frame" aria-label="Bảng ghim giấy note">
+        <!-- Corner brass brackets -->
+        <span class="frame-bracket tl" aria-hidden="true"></span>
+        <span class="frame-bracket tr" aria-hidden="true"></span>
+        <span class="frame-bracket bl" aria-hidden="true"></span>
+        <span class="frame-bracket br" aria-hidden="true"></span>
+
+        <!-- Cork surface -->
+        <div class="corkboard-surface" id="board-canvas">
+          <!-- Cute Fairy Lights & Mini Bunting along top of corkboard -->
+          <svg class="fairy-lights-svg" viewBox="0 0 1100 66" preserveAspectRatio="none" aria-hidden="true">
+            <!-- Delicate wire -->
+            <path d="M 0 10 Q 137 46 275 18 Q 412 52 550 20 Q 687 52 825 18 Q 962 46 1100 10"
+                  fill="none" stroke="#6E4E37" stroke-width="2.2" stroke-linecap="round" opacity="0.72" />
+            <!-- Pastel bunting flags -->
+            <polygon points="86,26 112,30 96,50" fill="#FFD3E0" stroke="#7A5643" stroke-width="1.3" opacity="0.92" />
+            <polygon points="184,30 210,27 200,50" fill="#C9F0DF" stroke="#7A5643" stroke-width="1.3" opacity="0.92" />
+            <polygon points="354,32 380,36 364,56" fill="#FFF0A6" stroke="#7A5643" stroke-width="1.3" opacity="0.92" />
+            <polygon points="452,36 478,31 469,55" fill="#CFE7FF" stroke="#7A5643" stroke-width="1.3" opacity="0.92" />
+            <polygon points="622,31 648,36 631,55" fill="#E6D4FF" stroke="#7A5643" stroke-width="1.3" opacity="0.92" />
+            <polygon points="720,36 746,32 736,56" fill="#FFD9B8" stroke="#7A5643" stroke-width="1.3" opacity="0.92" />
+            <polygon points="890,27 916,30 900,50" fill="#FFD3E0" stroke="#7A5643" stroke-width="1.3" opacity="0.92" />
+            <polygon points="988,30 1014,26 1004,50" fill="#C9F0DF" stroke="#7A5643" stroke-width="1.3" opacity="0.92" />
+
+            <!-- Fairy light bulbs -->
+            <g class="fairy-bulb b1"><circle cx="52" cy="22" r="11" class="bulb-halo" /><circle cx="52" cy="22" r="4.5" class="bulb-core" /></g>
+            <g class="fairy-bulb b2"><circle cx="145" cy="34" r="11" class="bulb-halo" /><circle cx="145" cy="34" r="4.5" class="bulb-core" /></g>
+            <g class="fairy-bulb b3"><circle cx="244" cy="24" r="11" class="bulb-halo" /><circle cx="244" cy="24" r="4.5" class="bulb-core" /></g>
+            <g class="fairy-bulb b4"><circle cx="322" cy="28" r="11" class="bulb-halo" /><circle cx="322" cy="28" r="4.5" class="bulb-core" /></g>
+            <g class="fairy-bulb b5"><circle cx="416" cy="39" r="11" class="bulb-halo" /><circle cx="416" cy="39" r="4.5" class="bulb-core" /></g>
+            <g class="fairy-bulb b6"><circle cx="512" cy="26" r="11" class="bulb-halo" /><circle cx="512" cy="26" r="4.5" class="bulb-core" /></g>
+            <g class="fairy-bulb b7"><circle cx="588" cy="26" r="11" class="bulb-halo" /><circle cx="588" cy="26" r="4.5" class="bulb-core" /></g>
+            <g class="fairy-bulb b8"><circle cx="684" cy="39" r="11" class="bulb-halo" /><circle cx="684" cy="39" r="4.5" class="bulb-core" /></g>
+            <g class="fairy-bulb b9"><circle cx="778" cy="28" r="11" class="bulb-halo" /><circle cx="778" cy="28" r="4.5" class="bulb-core" /></g>
+            <g class="fairy-bulb b10"><circle cx="856" cy="24" r="11" class="bulb-halo" /><circle cx="856" cy="24" r="4.5" class="bulb-core" /></g>
+            <g class="fairy-bulb b11"><circle cx="955" cy="34" r="11" class="bulb-halo" /><circle cx="955" cy="34" r="4.5" class="bulb-core" /></g>
+            <g class="fairy-bulb b12"><circle cx="1048" cy="22" r="11" class="bulb-halo" /><circle cx="1048" cy="22" r="4.5" class="bulb-core" /></g>
+          </svg>
+
+          <!-- Cute decorative pinned Polaroid in top-right corner -->
+          <div class="board-decor polaroid-decor" aria-hidden="true">
+            <div class="decor-tape"></div>
+            <div class="polaroid-pic">
+              <svg viewBox="0 0 64 56" width="56" height="48">
+                <rect width="64" height="56" rx="4" fill="#FFF1E6" />
+                <circle cx="32" cy="35" r="10" fill="#F29CB0" />
+                <circle cx="19" cy="23" r="5" fill="#F29CB0" />
+                <circle cx="28" cy="17" r="5" fill="#F29CB0" />
+                <circle cx="38" cy="17" r="5" fill="#F29CB0" />
+                <circle cx="46" cy="23" r="5" fill="#F29CB0" />
+                <text x="48" y="48" font-size="11">✨</text>
+              </svg>
+            </div>
+            <div class="polaroid-caption">Boss Chi ♡</div>
+          </div>
+
+          <!-- Cute decorative motivation card in top-left corner -->
+          <div class="board-decor mini-card-decor" aria-hidden="true">
+            <span class="mini-pin"></span>
+            <div class="mini-card-text">Cố lên nha! ☀️<br/><span>Mỗi ngày 1 chút</span></div>
+          </div>
+
+          <!-- Empty state hint when no notes match filter -->
+          <div class="board-empty-hint" id="board-empty-hint" hidden>
+            <div class="empty-icon">📌</div>
+            <p id="empty-hint-text">Bảng đang trống nè! Nhấn <strong>Dán note</strong> hoặc nhấp đúp lên bảng để thêm việc mới nha~</p>
+          </div>
+
+          <!-- Subtle hint on board -->
+          <div class="board-tip" aria-hidden="true">💡 Cuộn dọc bảng khi nhiều note • Kéo note vào miệng Chihuahua để xóa 🐶 • Xoa đầu cún để vuốt ve ✋</div>
+
+          <!-- Vertically Scrollable Corkboard Canvas (Frame, Fairy Lights & Desk stay fixed!) -->
+          <div class="board-scroll" id="board-scroll">
+            <!-- Sticky Notes Container -->
+            <div class="notes-layer" id="notes-layer"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- LAYER 3 (FRONT): Office Desk + Chibi Chihuahua -->
+    <section class="desk-foreground" aria-label="Bàn làm việc văn phòng và chú chó Chihuahua">
+      <!-- Warm desk lamp glow cone (active in night mode) -->
+      <div class="lamp-light-cone" id="lamp-light-cone" aria-hidden="true"></div>
+
+      <!-- Office desk top surface + front edge -->
+      <div class="office-desk">
+        <div class="desk-surface">
+          <div class="desk-mat"></div>
+        </div>
+        <div class="desk-front-edge">
+          <div class="desk-drawer-handle left"></div>
+          <div class="desk-drawer-handle right"></div>
+        </div>
+      </div>
+
+      <!-- Desk Props + Chihuahua Container -->
+      <div class="desk-items-stage">
+
+        <!-- LEFT SIDE PROPS: Books + Succulent + Mini Office Laptop + Steaming Coffee Mug -->
+        <div class="desk-left-cluster">
+          <!-- Stack of office folders & tiny potted succulent -->
+          <div class="prop-books-plant" title="Chậu sen đá văn phòng 🌵">
+            <svg viewBox="0 0 130 140" class="prop-svg">
+              <!-- Soft desk shadow -->
+              <ellipse cx="64" cy="131" rx="54" ry="7" fill="rgba(74, 48, 30, 0.18)" />
+              <!-- Bottom folder/book (pastel blue) -->
+              <rect x="12" y="106" width="102" height="22" rx="5" fill="#B9DCFF" stroke="#5A3E32" stroke-width="2.6" />
+              <rect x="20" y="113" width="32" height="7" rx="3" fill="#FFFDF9" opacity="0.85" />
+              <line x1="92" y1="106" x2="92" y2="128" stroke="#5A3E32" stroke-width="2" opacity="0.45" />
+              <!-- Middle book (pastel coral) -->
+              <rect x="18" y="85" width="90" height="21" rx="5" fill="#FFC5CE" stroke="#5A3E32" stroke-width="2.6" />
+              <rect x="28" y="92" width="24" height="6" rx="3" fill="#FFFDF9" opacity="0.85" />
+              <!-- Sticky page marker tabs -->
+              <rect x="108" y="90" width="10" height="7" rx="2" fill="#FFE680" stroke="#5A3E32" stroke-width="1.8" />
+              <rect x="114" y="111" width="9" height="7" rx="2" fill="#B9F0D3" stroke="#5A3E32" stroke-width="1.8" />
+
+              <!-- Cute Ceramic Pot -->
+              <path d="M 42 52 L 84 52 L 78 85 Q 63 89 48 85 Z" fill="#FFF8EF" stroke="#5A3E32" stroke-width="2.6" stroke-linejoin="round" />
+              <rect x="38" y="45" width="50" height="10" rx="4" fill="#FFE8CC" stroke="#5A3E32" stroke-width="2.6" />
+              <!-- Smiling face on pot -->
+              <circle cx="55" cy="68" r="2.2" fill="#5A3E32" />
+              <circle cx="71" cy="68" r="2.2" fill="#5A3E32" />
+              <path d="M 59 71 Q 63 75 67 71" fill="none" stroke="#5A3E32" stroke-width="2" stroke-linecap="round" />
+              <ellipse cx="50" cy="71" rx="3.2" ry="1.8" fill="#FF9EB5" opacity="0.7" />
+              <ellipse cx="76" cy="71" rx="3.2" ry="1.8" fill="#FF9EB5" opacity="0.7" />
+
+              <!-- Cute Succulent Leaves -->
+              <g class="plant-sway">
+                <ellipse cx="48" cy="36" rx="10" ry="14" transform="rotate(-26 48 36)" fill="#8FD694" stroke="#5A3E32" stroke-width="2.4" />
+                <ellipse cx="78" cy="36" rx="10" ry="14" transform="rotate(26 78 36)" fill="#8FD694" stroke="#5A3E32" stroke-width="2.4" />
+                <ellipse cx="63" cy="28" rx="11" ry="18" fill="#A6E3A1" stroke="#5A3E32" stroke-width="2.4" />
+                <ellipse cx="56" cy="38" rx="8" ry="12" transform="rotate(-14 56 38)" fill="#B7EEB2" stroke="#5A3E32" stroke-width="2.2" />
+                <ellipse cx="70" cy="38" rx="8" ry="12" transform="rotate(14 70 38)" fill="#B7EEB2" stroke="#5A3E32" stroke-width="2.2" />
+                <!-- Tiny pink flower on top -->
+                <circle cx="63" cy="11" r="4.5" fill="#FFACC5" stroke="#5A3E32" stroke-width="1.8" />
+                <circle cx="63" cy="11" r="1.8" fill="#FFE680" />
+              </g>
+            </svg>
+          </div>
+
+          <!-- Cute Mini Office Laptop — Interactive Music & Chill Player! -->
+          <div class="laptop-desk-wrap" id="laptop-desk-wrap">
+            <!-- Floating Music Player Popover (uses CSS hide so YouTube/Spotify keeps playing when collapsed!) -->
+            <div class="music-popover is-closed" id="music-popover" role="dialog" aria-label="Trình phát nhạc trên Laptop">
+              <div class="pomo-pop-head">
+                <span class="pomo-pop-title">💻 Góc Nhạc Chill Của Sếp Chi</span>
+                <button type="button" class="pomo-pop-close" id="btn-close-music" aria-label="Thu gọn trình phát nhạc">✕</button>
+              </div>
+
+              <div class="music-tabs" role="tablist">
+                <button type="button" class="music-tab active" data-mtab="ambient" role="tab" aria-selected="true">🌧️ Chill</button>
+                <button type="button" class="music-tab" data-mtab="embed" role="tab" aria-selected="false">▶️ YT / Spotify</button>
+                <button type="button" class="music-tab" data-mtab="local" role="tab" aria-selected="false">🎵 MP3</button>
+              </div>
+
+              <!-- TAB 1: Offline Ambient & Lo-fi Cozy Mixer -->
+              <div class="music-panel active" data-mpanel="ambient">
+                <p class="music-subhint">Trộn âm thanh tập trung (chạy mượt cả khi mất mạng ✨)</p>
+                <div class="ambient-list">
+                  <div class="ambient-row">
+                    <button type="button" class="ambient-toggle" id="btn-amb-lofi" data-amb="lofi">🎹 Nhạc Lo-fi</button>
+                    <input type="range" class="ambient-slider" id="vol-lofi" min="0" max="100" value="48" aria-label="Âm lượng nhạc Lo-fi" />
+                  </div>
+                  <div class="ambient-row">
+                    <button type="button" class="ambient-toggle" id="btn-amb-rain" data-amb="rain">🌧️ Mưa rơi</button>
+                    <input type="range" class="ambient-slider" id="vol-rain" min="0" max="100" value="45" aria-label="Âm lượng tiếng mưa" />
+                  </div>
+                  <div class="ambient-row">
+                    <button type="button" class="ambient-toggle" id="btn-amb-fire" data-amb="fire">🔥 Lửa ấm</button>
+                    <input type="range" class="ambient-slider" id="vol-fire" min="0" max="100" value="40" aria-label="Âm lượng tiếng lửa trại" />
+                  </div>
+                </div>
+                <button type="button" class="music-stop-all-btn" id="btn-stop-ambient">⏹ Tắt tất cả âm thanh nền</button>
+              </div>
+
+              <!-- TAB 2: YouTube / Spotify Link Embed -->
+              <div class="music-panel" data-mpanel="embed">
+                <form class="embed-form" id="embed-form">
+                  <input
+                    type="url"
+                    id="embed-url-input"
+                    class="embed-url-input"
+                    placeholder="Dán link YouTube hoặc Spotify vào đây..."
+                    autocomplete="off"
+                  />
+                  <button type="submit" class="embed-play-btn">Phát ▶</button>
+                </form>
+
+                <div class="embed-presets">
+                  <button type="button" class="embed-preset-btn" data-url="https://www.youtube.com/watch?v=jfKfPfyJRdk">🎧 Lofi Girl</button>
+                  <button type="button" class="embed-preset-btn" data-url="https://www.youtube.com/watch?v=3jWRrafhO7M">🎹 Ghibli Piano</button>
+                  <button type="button" class="embed-preset-btn" data-url="https://www.youtube.com/watch?v=Dx5qFachd3A">☕ Jazz Cafe</button>
+                </div>
+
+                <div class="embed-stage" id="embed-stage">
+                  <div class="embed-placeholder" id="embed-placeholder">
+                    Chọn kênh gợi ý hoặc dán link YouTube / Spotify để phát nhạc nền nhé~ 🎶
+                  </div>
+                </div>
+
+                <div class="embed-footer-bar">
+                  <span class="embed-note-hint">💡 Đóng khung nhạc vẫn tiếp tục phát!</span>
+                  <button type="button" class="embed-stop-btn" id="btn-stop-embed" hidden>⏹ Dừng</button>
+                </div>
+              </div>
+
+              <!-- TAB 3: Local MP3 Files from Computer -->
+              <div class="music-panel" data-mpanel="local">
+                <label class="mp3-upload-btn" for="mp3-file-input">
+                  📂 Chọn file nhạc (.mp3, .wav, .m4a) từ máy
+                </label>
+                <input type="file" id="mp3-file-input" accept="audio/*" multiple hidden />
+                <audio id="local-audio-player" class="local-audio-player" controls></audio>
+                <ul class="mp3-playlist" id="mp3-playlist">
+                  <li class="mp3-empty">Chưa có bài hát nào. Chọn file nhạc từ máy để tạo playlist riêng nhé~ 🎵</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Interactive Laptop Button on Desk -->
+            <button type="button" class="prop-laptop interactive-prop" id="prop-laptop" title="Laptop phát nhạc của Sếp Chi — nhấn để mở nhạc Chill / YouTube / Spotify 💻🎶">
+              <span class="laptop-music-notes" aria-hidden="true">
+                <span class="m-note n1">♪</span>
+                <span class="m-note n2">♫</span>
+              </span>
+              <svg viewBox="0 0 175 118" class="prop-svg">
+                <ellipse cx="88" cy="110" rx="76" ry="7" fill="rgba(74, 48, 30, 0.18)" />
+                <!-- Laptop Back Lid -->
+                <path d="M 28 18 Q 28 10 38 10 L 138 10 Q 148 10 148 18 L 154 92 L 22 92 Z"
+                      fill="#E9F2E8" stroke="#5A3E32" stroke-width="2.8" stroke-linejoin="round" />
+                <!-- Soft sheen on lid -->
+                <path d="M 38 16 L 136 16 L 140 84 L 34 84 Z" fill="#F4FAF3" opacity="0.7" />
+                <!-- Cute Paw Sticker on Laptop -->
+                <g transform="translate(88 49)">
+                  <circle cx="0" cy="5" r="8" fill="#FF9EB5" stroke="#5A3E32" stroke-width="1.8" />
+                  <circle cx="-10" cy="-4" r="3.8" fill="#FF9EB5" stroke="#5A3E32" stroke-width="1.6" />
+                  <circle cx="-3.5" cy="-9" r="3.8" fill="#FF9EB5" stroke="#5A3E32" stroke-width="1.6" />
+                  <circle cx="3.5" cy="-9" r="3.8" fill="#FF9EB5" stroke="#5A3E32" stroke-width="1.6" />
+                  <circle cx="10" cy="-4" r="3.8" fill="#FF9EB5" stroke="#5A3E32" stroke-width="1.6" />
+                </g>
+                <!-- Cute tiny music note sticker -->
+                <circle cx="48" cy="30" r="7" fill="#FFE680" stroke="#5A3E32" stroke-width="1.6" />
+                <text x="44" y="34" font-size="10" fill="#5A3E32" font-weight="700">♫</text>
+                <!-- Laptop Base -->
+                <path d="M 12 92 L 164 92 L 170 104 Q 170 109 162 109 L 14 109 Q 6 109 6 104 Z"
+                      fill="#D5E4D3" stroke="#5A3E32" stroke-width="2.8" stroke-linejoin="round" />
+                <rect x="74" y="98" width="28" height="4" rx="2" fill="#5A3E32" opacity="0.4" />
+                <!-- Glowing green LED dot when music is playing -->
+                <circle cx="144" cy="100" r="3" class="laptop-led" fill="#94BFA2" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Steaming Office Mug (Interactive!) -->
+          <button type="button" class="prop-mug interactive-prop" id="prop-mug" title="Nhấn để mời Sếp Chi uống cà phê sữa ☕">
+            <svg viewBox="0 0 86 96" class="prop-svg">
+              <ellipse cx="40" cy="89" rx="28" ry="5.5" fill="rgba(74, 48, 30, 0.18)" />
+              <!-- Animated Steam -->
+              <path class="steam-line s1" d="M 30 30 Q 25 20 32 12 Q 37 6 31 2" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.85" />
+              <path class="steam-line s2" d="M 46 28 Q 52 18 45 10 Q 40 4 47 0" fill="none" stroke="#FFFFFF" stroke-width="2.8" stroke-linecap="round" opacity="0.75" />
+              <!-- Mug handle -->
+              <path d="M 59 46 Q 76 46 76 60 Q 76 74 58 74" fill="none" stroke="#5A3E32" stroke-width="6.5" stroke-linecap="round" />
+              <path d="M 59 46 Q 76 46 76 60 Q 76 74 58 74" fill="none" stroke="#FFE0B5" stroke-width="2.5" stroke-linecap="round" />
+              <!-- Mug body -->
+              <path d="M 16 40 L 62 40 L 59 80 Q 58 88 39 88 Q 20 88 19 80 Z"
+                    fill="#FFF7EB" stroke="#5A3E32" stroke-width="2.6" stroke-linejoin="round" />
+              <!-- Rim & coffee top -->
+              <ellipse cx="39" cy="40" rx="23" ry="5.5" fill="#C98D5B" stroke="#5A3E32" stroke-width="2.4" />
+              <!-- Cute mug face -->
+              <circle cx="31" cy="61" r="2.2" fill="#5A3E32" />
+              <circle cx="47" cy="61" r="2.2" fill="#5A3E32" />
+              <path d="M 36 64 Q 39 67 42 64" fill="none" stroke="#5A3E32" stroke-width="2" stroke-linecap="round" />
+              <ellipse cx="26" cy="64" rx="3" ry="1.8" fill="#FF9EB5" opacity="0.75" />
+              <ellipse cx="52" cy="64" rx="3" ry="1.8" fill="#FF9EB5" opacity="0.75" />
+            </svg>
+          </button>
+
+          <!-- Cute Tomato Pomodoro Timer on Desk (Interactive!) -->
+          <div class="pomodoro-desk-wrap" id="pomodoro-desk-wrap">
+            <!-- Floating Pomodoro Control Popover -->
+            <div class="pomo-popover" id="pomo-popover" role="dialog" aria-label="Đồng hồ cà chua Pomodoro" hidden>
+              <div class="pomo-pop-head">
+                <span class="pomo-pop-title">🍅 Đồng hồ Pomodoro</span>
+                <button type="button" class="pomo-pop-close" id="btn-close-pomo" aria-label="Đóng">✕</button>
+              </div>
+
+              <div class="pomo-modes" id="pomo-modes">
+                <button type="button" class="pomo-mode-btn active" data-mode="focus" data-mins="25">🍅 Tập trung</button>
+                <button type="button" class="pomo-mode-btn" data-mode="short" data-mins="5">☕ Nghỉ ngắn</button>
+                <button type="button" class="pomo-mode-btn" data-mode="long" data-mins="15">🌿 Nghỉ dài</button>
+              </div>
+
+              <div class="pomo-dial">
+                <svg viewBox="0 0 120 120" class="pomo-ring-svg" aria-hidden="true">
+                  <circle cx="60" cy="60" r="50" class="pomo-ring-track" />
+                  <circle cx="60" cy="60" r="50" class="pomo-ring-progress" id="pomo-ring-progress" />
+                </svg>
+                <div class="pomo-dial-center">
+                  <div class="pomo-big-time" id="pomo-big-time">25:00</div>
+                  <div class="pomo-mode-label" id="pomo-mode-label">Tập trung cao độ</div>
+                </div>
+              </div>
+
+              <div class="pomo-custom-row">
+                <span class="pomo-custom-label">Chỉnh phút:</span>
+                <button type="button" class="pomo-step-btn" id="btn-pomo-minus" title="Giảm 5 phút">−</button>
+                <input type="number" id="pomo-mins-input" class="pomo-mins-input" min="1" max="120" value="25" aria-label="Số phút Pomodoro" />
+                <button type="button" class="pomo-step-btn" id="btn-pomo-plus" title="Tăng 5 phút">+</button>
+                <span class="pomo-unit">phút</span>
+              </div>
+
+              <div class="pomo-controls">
+                <button type="button" class="pomo-action-btn primary" id="btn-pomo-toggle">▶ Bắt đầu</button>
+                <button type="button" class="pomo-action-btn secondary" id="btn-pomo-reset" title="Đặt lại đồng hồ">↺ Đặt lại</button>
+              </div>
+
+              <div class="pomo-stats" id="pomo-stats">
+                <span>🍅 Hôm nay hoàn thành: <strong id="pomo-done-count">0</strong> quả</span>
+              </div>
+            </div>
+
+            <!-- Cute Tomato Timer SVG Sitting on the Desk -->
+            <button type="button" class="prop-pomodoro interactive-prop" id="prop-pomodoro" title="Đồng hồ cà chua Pomodoro — nhấn để bấm giờ tập trung 🍅">
+              <span class="pomo-mini-status" id="pomo-mini-status" aria-hidden="true"></span>
+              <svg viewBox="0 0 100 102" class="prop-svg">
+                <ellipse cx="50" cy="95" rx="34" ry="6" fill="rgba(74, 48, 30, 0.2)" />
+                <!-- Tomato Stem & Cute Green Leaves -->
+                <g class="tomato-leaves">
+                  <path d="M 50 22 Q 48 11 54 7" fill="none" stroke="#5A3E32" stroke-width="3.6" stroke-linecap="round" />
+                  <path d="M 50 22 Q 48 11 54 7" fill="none" stroke="#7CC96B" stroke-width="1.6" stroke-linecap="round" />
+                  <path d="M 50 25 Q 32 14 24 25 Q 36 31 50 26 Z" fill="#8FD67E" stroke="#5A3E32" stroke-width="2.2" stroke-linejoin="round" />
+                  <path d="M 50 25 Q 68 14 76 25 Q 64 31 50 26 Z" fill="#8FD67E" stroke="#5A3E32" stroke-width="2.2" stroke-linejoin="round" />
+                  <path d="M 50 25 Q 43 36 35 37 Q 45 30 50 25 Z" fill="#A6E394" stroke="#5A3E32" stroke-width="2" stroke-linejoin="round" />
+                  <path d="M 50 25 Q 57 36 65 37 Q 55 30 50 25 Z" fill="#A6E394" stroke="#5A3E32" stroke-width="2" stroke-linejoin="round" />
+                </g>
+                <!-- Plump Chibi Tomato Body -->
+                <path d="M 16 58 C 14 35, 30 23, 50 25 C 70 23, 86 35, 84 58 C 83 80, 68 92, 50 92 C 32 92, 17 80, 16 58 Z"
+                      fill="#FF746C" stroke="#5A3E32" stroke-width="2.8" />
+                <!-- Glossy highlight on upper-left -->
+                <ellipse cx="30" cy="43" rx="6" ry="10" transform="rotate(24 30 43)" fill="#FFA8A0" opacity="0.72" />
+                <!-- Cute mini face above display -->
+                <circle cx="37" cy="48" r="2.1" fill="#5A3E32" />
+                <circle cx="63" cy="48" r="2.1" fill="#5A3E32" />
+                <path d="M 47 49 Q 50 52 53 49" fill="none" stroke="#5A3E32" stroke-width="1.9" stroke-linecap="round" />
+                <ellipse cx="31" cy="51" rx="3.4" ry="1.8" fill="#FFB8C4" opacity="0.75" />
+                <ellipse cx="69" cy="51" rx="3.4" ry="1.8" fill="#FFB8C4" opacity="0.75" />
+                <!-- Mini Digital Screen on Tomato Tummy -->
+                <rect x="25" y="58" width="50" height="22" rx="7" fill="#FFF8EE" stroke="#5A3E32" stroke-width="2.2" />
+                <text x="50" y="73.5" text-anchor="middle" id="pomo-desk-time" font-family="Quicksand, sans-serif" font-size="12.5" font-weight="700" fill="#5A3E32">25:00</text>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- CENTER STAR: CHIBI CHIHUAHUA AT OFFICE DESK -->
+        <div class="chihuahua-station">
+          <!-- Speech Bubble -->
+          <div class="chi-speech-bubble" id="chi-speech-bubble" role="status" aria-live="polite">
+            <span id="chi-speech-text">Gâu gâu! Hôm nay mình làm việc gì nào? 📌</span>
+          </div>
+
+          <!-- Floating hearts / sparkles FX container -->
+          <div class="chi-fx-layer" id="chi-fx-layer" aria-hidden="true"></div>
+
+          <!-- Cute Petting Hand that follows cursor/finger when rubbing Chihuahua's head -->
+          <div class="petting-hand" id="petting-hand" aria-hidden="true">✋</div>
+
+          <!-- Interactive Chibi Chihuahua SVG -->
+          <button type="button" class="chihuahua-avatar mood-idle" id="chihuahua" aria-label="Vuốt ve chú chó Chihuahua" title="Di chuột hoặc vuốt qua lại trên đầu để xoa đầu Sếp Chi nè! ✋🐾">
+            <svg viewBox="0 0 260 225" class="chihuahua-svg">
+              <!-- Desk contact shadow -->
+              <ellipse cx="130" cy="209" rx="74" ry="10" fill="rgba(74, 48, 30, 0.22)" />
+
+              <!-- Cute Wagging Tail (peeking behind right side) -->
+              <g class="chi-tail">
+                <path d="M 176 176 Q 214 166 216 135 Q 217 120 205 123 Q 194 126 196 144 Q 197 156 172 165 Z"
+                      fill="#EAB676" stroke="#5A3E32" stroke-width="3.2" stroke-linejoin="round" />
+                <path d="M 207 125 Q 214 128 212 138" fill="none" stroke="#FFF6EA" stroke-width="4" stroke-linecap="round" />
+              </g>
+
+              <!-- Chibi Body sitting at desk -->
+              <path d="M 80 142 Q 72 178 78 202 Q 130 212 182 202 Q 188 178 180 142 Z"
+                    fill="#EAB676" stroke="#5A3E32" stroke-width="3.4" stroke-linejoin="round" />
+              <!-- Fluffy cream tummy/chest -->
+              <path d="M 98 148 Q 95 180 104 202 Q 130 208 156 202 Q 165 180 162 148 Z"
+                    fill="#FFF6EA" />
+
+              <!-- Crisp Office Collar & Cute Red Tie -->
+              <g class="chi-office-tie">
+                <!-- White shirt collar -->
+                <polygon points="104,146 130,159 112,167" fill="#FFFFFF" stroke="#5A3E32" stroke-width="2.4" stroke-linejoin="round" />
+                <polygon points="156,146 130,159 148,167" fill="#FFFFFF" stroke="#5A3E32" stroke-width="2.4" stroke-linejoin="round" />
+                <!-- Cute Coral-Red Necktie -->
+                <polygon points="124,158 136,158 139,185 130,194 121,185" fill="#FF6B7D" stroke="#5A3E32" stroke-width="2.4" stroke-linejoin="round" />
+                <polygon points="124,155 136,155 134,163 126,163" fill="#FF4F66" stroke="#5A3E32" stroke-width="2.2" stroke-linejoin="round" />
+                <!-- Cute white stripe on tie -->
+                <line x1="123" y1="173" x2="137" y2="169" stroke="#FFF5F7" stroke-width="2.2" stroke-linecap="round" />
+                <line x1="122" y1="181" x2="138" y2="177" stroke="#FFF5F7" stroke-width="2.2" stroke-linecap="round" />
+              </g>
+
+              <!-- CHIHUAHUA HEAD GROUP (gentle breathing & tilt) -->
+              <g class="chi-head-group">
+                <!-- Giant Iconic Chihuahua Left Ear -->
+                <g class="chi-ear-left">
+                  <path d="M 86 76 Q 26 24 22 44 Q 18 76 64 114 Z"
+                        fill="#E5A863" stroke="#5A3E32" stroke-width="3.4" stroke-linejoin="round" />
+                  <!-- Rosy inner ear -->
+                  <path d="M 76 80 Q 37 42 34 54 Q 32 76 66 104 Z"
+                        fill="#FFB6C6" />
+                </g>
+
+                <!-- Giant Iconic Chihuahua Right Ear -->
+                <g class="chi-ear-right">
+                  <path d="M 174 76 Q 234 24 238 44 Q 242 76 196 114 Z"
+                        fill="#E5A863" stroke="#5A3E32" stroke-width="3.4" stroke-linejoin="round" />
+                  <!-- Rosy inner ear -->
+                  <path d="M 184 80 Q 223 42 226 54 Q 228 76 194 104 Z"
+                        fill="#FFB6C6" />
+                </g>
+
+                <!-- Classic Round Apple-Head Silhouette -->
+                <path d="M 67 104 C 65 62, 92 44, 130 44 C 168 44, 195 62, 193 104 C 195 134, 168 154, 130 154 C 92 154, 65 134, 67 104 Z"
+                      fill="#F0BE82" stroke="#5A3E32" stroke-width="3.4" />
+
+                <!-- Soft cream cheek & muzzle fur mask -->
+                <path d="M 78 118 Q 92 98 112 108 Q 130 98 148 108 Q 168 98 182 118 Q 182 148 130 151 Q 78 148 78 118 Z"
+                      fill="#FFF6EA" />
+
+                <!-- Forehead cream stripe -->
+                <ellipse cx="130" cy="76" rx="11" ry="18" fill="#FFF6EA" opacity="0.6" />
+
+                <!-- Tiny Fluffy Hair Tuft on Top -->
+                <path d="M 122 45 Q 128 33 134 44 Q 140 35 142 46"
+                      fill="#F0BE82" stroke="#5A3E32" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" />
+
+                <!-- Cute Cozy Pastel Over-Ear Headphones (Appears automatically when music is playing!) -->
+                <g class="chi-headphones" id="chi-headphones">
+                  <!-- Soft arched headband -->
+                  <path d="M 65 96 C 65 34, 195 34, 195 96" fill="none" stroke="#5A3E32" stroke-width="9.5" stroke-linecap="round" />
+                  <path d="M 65 96 C 65 34, 195 34, 195 96" fill="none" stroke="#FF9BB3" stroke-width="4.8" stroke-linecap="round" />
+                  <!-- Cushion highlight on headband -->
+                  <path d="M 104 42 Q 130 36 156 42" fill="none" stroke="#FFD6E2" stroke-width="2.4" stroke-linecap="round" />
+                  <!-- Left earcup -->
+                  <rect x="52" y="84" width="18" height="32" rx="9" fill="#FF8DA8" stroke="#5A3E32" stroke-width="2.8" />
+                  <rect x="64" y="88" width="7" height="24" rx="3.5" fill="#FFF3E6" stroke="#5A3E32" stroke-width="2" />
+                  <!-- Right earcup -->
+                  <rect x="190" y="84" width="18" height="32" rx="9" fill="#FF8DA8" stroke="#5A3E32" stroke-width="2.8" />
+                  <rect x="189" y="88" width="7" height="24" rx="3.5" fill="#FFF3E6" stroke="#5A3E32" stroke-width="2" />
+                </g>
+
+                <!-- Adorable Chihuahua Eyebrow Dots -->
+                <ellipse cx="101" cy="84" rx="8" ry="4.5" transform="rotate(-10 101 84)" fill="#FFF6EA" />
+                <ellipse cx="159" cy="84" rx="8" ry="4.5" transform="rotate(10 159 84)" fill="#FFF6EA" />
+
+                <!-- NORMAL EXPRESSIVE BIG CHIBI EYES -->
+                <g class="chi-eyes-normal">
+                  <!-- Left Eye -->
+                  <g class="chi-eye-left">
+                    <ellipse cx="99" cy="105" rx="13.5" ry="14.5" fill="#3B231B" />
+                    <g class="chi-pupil" data-eye="left">
+                      <circle cx="94.5" cy="99.5" r="5" fill="#FFFFFF" />
+                      <circle cx="104" cy="110" r="2.3" fill="#FFFFFF" opacity="0.9" />
+                    </g>
+                  </g>
+                  <!-- Right Eye -->
+                  <g class="chi-eye-right">
+                    <ellipse cx="161" cy="105" rx="13.5" ry="14.5" fill="#3B231B" />
+                    <g class="chi-pupil" data-eye="right">
+                      <circle cx="156.5" cy="99.5" r="5" fill="#FFFFFF" />
+                      <circle cx="166" cy="110" r="2.3" fill="#FFFFFF" opacity="0.9" />
+                    </g>
+                  </g>
+                  <!-- Blinking Eyelids -->
+                  <ellipse class="chi-eyelid" cx="99" cy="105" rx="14.5" ry="15.5" fill="#F0BE82" />
+                  <ellipse class="chi-eyelid" cx="161" cy="105" rx="14.5" ry="15.5" fill="#F0BE82" />
+                </g>
+
+                <!-- HAPPY SQUINT EYES (^ ^) shown during happy/blush mood -->
+                <g class="chi-eyes-happy">
+                  <path d="M 86 108 Q 99 93 112 108" fill="none" stroke="#3B231B" stroke-width="4" stroke-linecap="round" />
+                  <path d="M 148 108 Q 161 93 174 108" fill="none" stroke="#3B231B" stroke-width="4" stroke-linecap="round" />
+                </g>
+
+                <!-- Cute Rosy Cheeks -->
+                <ellipse class="chi-blush" cx="81" cy="121" rx="10" ry="5.5" fill="#FF8FA8" opacity="0.58" />
+                <ellipse class="chi-blush" cx="179" cy="121" rx="10" ry="5.5" fill="#FF8FA8" opacity="0.58" />
+
+                <!-- Cute Optional Round Office Glasses (toggle by clicking nameplate!) -->
+                <g class="chi-glasses" id="chi-glasses">
+                  <circle cx="99" cy="106" r="19" fill="rgba(255,255,255,0.16)" stroke="#7A5230" stroke-width="2.6" />
+                  <circle cx="161" cy="106" r="19" fill="rgba(255,255,255,0.16)" stroke="#7A5230" stroke-width="2.6" />
+                  <path d="M 118 105 Q 130 100 142 105" fill="none" stroke="#7A5230" stroke-width="2.6" stroke-linecap="round" />
+                  <line x1="72" y1="102" x2="80" y2="105" stroke="#7A5230" stroke-width="2.4" stroke-linecap="round" />
+                  <line x1="180" y1="105" x2="188" y2="102" stroke="#7A5230" stroke-width="2.4" stroke-linecap="round" />
+                  <!-- Tiny glass shine -->
+                  <line x1="88" y1="96" x2="94" y2="91" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity="0.7" />
+                  <line x1="150" y1="96" x2="156" y2="91" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity="0.7" />
+                </g>
+
+                <!-- Tiny Glossy Button Nose -->
+                <ellipse cx="130" cy="117" rx="7.2" ry="5.2" fill="#462B22" />
+                <ellipse cx="128" cy="115.2" rx="2.4" ry="1.3" fill="#FFFFFF" opacity="0.65" />
+
+                <!-- Sweet :3 Mouth (Normal) -->
+                <g class="chi-mouth-normal">
+                  <path d="M 119 125 Q 124.5 131 130 124 Q 135.5 131 141 125"
+                        fill="none" stroke="#5A3E32" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
+                  <!-- Cute Pink Tongue (peeks out when happy!) -->
+                  <path class="chi-tongue" d="M 125 127 Q 130 139 135 127 Z"
+                        fill="#FF869E" stroke="#5A3E32" stroke-width="2" stroke-linejoin="round" />
+                </g>
+
+                <!-- WIDE OPEN MOUTH (Shown when dragging a sticky note to feed/delete!) -->
+                <g class="chi-mouth-open">
+                  <!-- Dark cozy mouth cavity -->
+                  <ellipse cx="130" cy="134" rx="19" ry="15.5" fill="#7D2E3A" stroke="#5A3E32" stroke-width="2.8" />
+                  <!-- Cute tiny puppy fangs -->
+                  <polygon points="116,123 121,123 118.5,129" fill="#FFFFFF" stroke="#5A3E32" stroke-width="1.3" stroke-linejoin="round" />
+                  <polygon points="139,123 144,123 141.5,129" fill="#FFFFFF" stroke="#5A3E32" stroke-width="1.3" stroke-linejoin="round" />
+                  <!-- Big cute pink tongue inside open mouth -->
+                  <path d="M 117 141 Q 130 130 143 141 Q 136 149 130 149 Q 124 149 117 141 Z"
+                        fill="#FF8AA1" stroke="#5A3E32" stroke-width="1.6" />
+                </g>
+
+                <!-- CHEWING MOUTH (Shown right after eating a note!) -->
+                <g class="chi-mouth-chew">
+                  <path d="M 120 130 Q 125 125 130 130 Q 135 125 140 130 Q 135 137 130 135 Q 125 137 120 130 Z"
+                        fill="#FF8AA1" stroke="#5A3E32" stroke-width="2.4" stroke-linejoin="round" />
+                </g>
+              </g>
+
+              <!-- Tiny Paws Resting on the Desk Edge -->
+              <g class="chi-paws">
+                <!-- Left paw -->
+                <ellipse cx="94" cy="199" rx="16" ry="11" fill="#FFF6EA" stroke="#5A3E32" stroke-width="3" />
+                <line x1="89" y1="201" x2="89" y2="208" stroke="#5A3E32" stroke-width="2" stroke-linecap="round" />
+                <line x1="96" y1="201" x2="96" y2="208" stroke="#5A3E32" stroke-width="2" stroke-linecap="round" />
+                <!-- Right paw holding a tiny pastel pencil! -->
+                <g transform="rotate(-22 178 190)">
+                  <rect x="166" y="168" width="8" height="36" rx="2.5" fill="#FFE074" stroke="#5A3E32" stroke-width="2" />
+                  <polygon points="166,168 174,168 170,158" fill="#FFE8D1" stroke="#5A3E32" stroke-width="2" stroke-linejoin="round" />
+                  <polygon points="168.5,161.5 171.5,161.5 170,158" fill="#5A3E32" />
+                  <rect x="166" y="200" width="8" height="6" rx="1.5" fill="#FF9EB5" stroke="#5A3E32" stroke-width="2" />
+                </g>
+                <ellipse cx="166" cy="199" rx="16" ry="11" fill="#FFF6EA" stroke="#5A3E32" stroke-width="3" />
+                <line x1="163" y1="201" x2="163" y2="208" stroke="#5A3E32" stroke-width="2" stroke-linecap="round" />
+                <line x1="170" y1="201" x2="170" y2="208" stroke="#5A3E32" stroke-width="2" stroke-linecap="round" />
+              </g>
+            </svg>
+          </button>
+
+          <!-- Cute Office Desk Nameplate (Click to toggle glasses!) -->
+          <button type="button" class="desk-nameplate" id="desk-nameplate" title="Nhấn để đeo / tháo kính cho Sếp Chi 👓">
+            <span class="nameplate-role">SẾP CHIHUAHUA</span>
+            <span class="nameplate-sub">👓 Chuyên gia nhắc việc</span>
+          </button>
+        </div>
+
+        <!-- RIGHT SIDE PROPS: Sticky Pad + Pen Holder + Mini Desk Clock + Interactive Desk Lamp -->
+        <div class="desk-right-cluster">
+          <!-- Cute Sticky Note Pad on Desk (Click to add new note!) -->
+          <button type="button" class="prop-sticky-pad interactive-prop" id="prop-sticky-pad" title="Nhấn để xé 1 tờ note mới dán lên bảng! 📝">
+            <svg viewBox="0 0 96 68" class="prop-svg">
+              <ellipse cx="48" cy="60" rx="40" ry="6" fill="rgba(74, 48, 30, 0.18)" />
+              <!-- Stack depth layers -->
+              <path d="M 12 42 L 82 42 L 88 56 L 8 56 Z" fill="#EBD06D" stroke="#5A3E32" stroke-width="2.4" stroke-linejoin="round" />
+              <path d="M 12 36 L 82 36 L 88 50 L 8 50 Z" fill="#F7DE7E" stroke="#5A3E32" stroke-width="2.4" stroke-linejoin="round" />
+              <!-- Top curled sticky sheet -->
+              <path d="M 13 26 L 81 26 L 87 43 Q 68 46 56 38 L 9 44 Z" fill="#FFF3A8" stroke="#5A3E32" stroke-width="2.4" stroke-linejoin="round" />
+              <!-- Cute "+ Note" doodle -->
+              <text x="27" y="39" font-size="11" font-family="Quicksand, sans-serif" font-weight="700" fill="#7D5A38">+ Note</text>
+            </svg>
+          </button>
+
+          <!-- Cute Mini Office Trash Bin (Click to gather & clear completed notes with confirmation!) -->
+          <button type="button" class="prop-trash-bin interactive-prop" id="prop-trash-bin" title="Thùng rác mini — nhấn để gom & dọn các tờ note đã xong 🗑️">
+            <span class="trash-count-badge" id="trash-count-badge" hidden>0</span>
+            <svg viewBox="0 0 92 116" class="prop-svg">
+              <ellipse cx="46" cy="108" rx="30" ry="6" fill="rgba(74, 48, 30, 0.18)" />
+              <!-- Crumpled paper balls peeking inside (visible when done notes exist) -->
+              <g class="trash-papers" id="trash-papers">
+                <circle cx="35" cy="40" r="8" fill="#FFF3A8" stroke="#5A3E32" stroke-width="2" />
+                <circle cx="52" cy="38" r="9" fill="#FFD6E4" stroke="#5A3E32" stroke-width="2" />
+                <circle cx="44" cy="43" r="7" fill="#E7D6FF" stroke="#5A3E32" stroke-width="2" />
+              </g>
+              <!-- Trash Bin Body -->
+              <path d="M 20 44 L 72 44 L 66 99 Q 65 107 46 107 Q 27 107 26 99 Z"
+                    fill="#BFEBD7" stroke="#5A3E32" stroke-width="2.6" stroke-linejoin="round" />
+              <!-- Subtle vertical bin grooves -->
+              <line x1="34" y1="54" x2="36" y2="96" stroke="#8AC9AC" stroke-width="2.4" stroke-linecap="round" />
+              <line x1="58" y1="54" x2="56" y2="96" stroke="#8AC9AC" stroke-width="2.4" stroke-linecap="round" />
+              <!-- Cute Kawaii Face on Trash Bin -->
+              <circle cx="38" cy="72" r="2.4" fill="#5A3E32" />
+              <circle cx="54" cy="72" r="2.4" fill="#5A3E32" />
+              <path d="M 43 75 Q 46 78.5 49 75" fill="none" stroke="#5A3E32" stroke-width="2.1" stroke-linecap="round" />
+              <ellipse cx="33" cy="75" rx="3.4" ry="1.9" fill="#FF9EB5" opacity="0.72" />
+              <ellipse cx="59" cy="75" rx="3.4" ry="1.9" fill="#FF9EB5" opacity="0.72" />
+              <!-- Animated Flip Lid -->
+              <g class="trash-lid">
+                <!-- Lid Handle -->
+                <path d="M 38 30 Q 38 22 46 22 Q 54 22 54 30" fill="none" stroke="#5A3E32" stroke-width="3" stroke-linecap="round" />
+                <!-- Lid Rim -->
+                <rect x="14" y="30" width="64" height="14" rx="6" fill="#9ED8BE" stroke="#5A3E32" stroke-width="2.6" />
+                <line x1="23" y1="35" x2="69" y2="35" stroke="#D8F7E8" stroke-width="2" stroke-linecap="round" opacity="0.75" />
+              </g>
+            </svg>
+          </button>
+
+          <!-- Cute Mini Digital Desk Clock / Date (Click to check next reminder!) -->
+          <button type="button" class="prop-desk-clock interactive-prop" id="prop-desk-clock" title="Đồng hồ bàn — nhấn để hỏi Sếp Chi lịch nhắc sắp tới ⏰">
+            <div class="clock-ears" aria-hidden="true"><span></span><span></span></div>
+            <div class="clock-body">
+              <div class="clock-time" id="desk-clock-time">10:17</div>
+              <div class="clock-date" id="desk-clock-date">T4, 25/11</div>
+              <div class="clock-next-alarm" id="clock-next-alarm" hidden>🔔 --:--</div>
+            </div>
+          </button>
+
+          <!-- Interactive Cute Office Desk Lamp (Toggles Day / Cozy Night Mode!) -->
+          <button type="button" class="prop-desk-lamp interactive-prop" id="prop-desk-lamp" title="Nhấn để bật / tắt đèn bàn (Chế độ sáng / tối ấm áp) 💡">
+            <svg viewBox="0 0 118 158" class="prop-svg">
+              <ellipse cx="66" cy="148" rx="34" ry="6.5" fill="rgba(74, 48, 30, 0.2)" />
+              <!-- Lamp Arm -->
+              <path d="M 68 136 L 88 86 L 54 44" fill="none" stroke="#5A3E32" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M 68 136 L 88 86 L 54 44" fill="none" stroke="#F6C97E" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round" />
+              <!-- Joint Circle -->
+              <circle cx="88" cy="86" r="7" fill="#FFF3D9" stroke="#5A3E32" stroke-width="2.6" />
+              <!-- Lamp Base -->
+              <path d="M 38 144 Q 38 130 66 130 Q 94 130 94 144 Q 94 148 66 148 Q 38 148 38 144 Z"
+                    fill="#F4BA6A" stroke="#5A3E32" stroke-width="2.6" />
+              <!-- Cute switch button on base -->
+              <rect x="52" y="125" width="10" height="6" rx="3" fill="#FF7C8F" stroke="#5A3E32" stroke-width="2" />
+              <!-- Glowing Bulb -->
+              <circle cx="36" cy="60" r="10" class="lamp-bulb-svg" fill="#FFF2A6" stroke="#5A3E32" stroke-width="2.2" />
+              <!-- Lamp Shade -->
+              <path d="M 48 30 Q 60 28 65 40 L 58 68 Q 34 72 16 58 L 36 32 Z"
+                    fill="#F4BA6A" stroke="#5A3E32" stroke-width="2.8" stroke-linejoin="round" />
+              <!-- Cute top cap -->
+              <ellipse cx="48" cy="31" rx="8" ry="5" transform="rotate(28 48 31)" fill="#FFE6B8" stroke="#5A3E32" stroke-width="2.4" />
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+  <!-- Overlay layer for dragging notes freely off the corkboard down to Chihuahua's mouth -->
+  <div class="drag-overlay" id="drag-overlay" aria-hidden="true"></div>
+
+  <!-- Cute Reminder Alarm Banner when a Note reaches its scheduled time -->
+  <div class="alarm-toast" id="alarm-toast" role="alertdialog" aria-live="assertive" hidden>
+    <div class="alarm-toast-head">
+      <span class="alarm-bell-icon">🔔</span>
+      <span class="alarm-toast-title">Sếp Chi nhắc việc tới giờ!</span>
+      <span class="alarm-toast-time" id="alarm-toast-time">15:00</span>
+    </div>
+    <p class="alarm-toast-text" id="alarm-toast-text"></p>
+    <div class="alarm-toast-actions">
+      <button type="button" class="alarm-btn done" id="btn-alarm-done">✅ Xong rồi</button>
+      <button type="button" class="alarm-btn snooze" id="btn-alarm-snooze">💤 +5 phút</button>
+      <button type="button" class="alarm-btn dismiss" id="btn-alarm-dismiss">👌 Đã biết</button>
+    </div>
+  </div>
+
+  <!-- Cute Modal Composer for Adding a New Sticky Note -->
+  <div class="modal-backdrop" id="note-modal-backdrop" hidden>
+    <div class="note-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-header">
+        <h2 id="modal-title">📌 Dán giấy note mới</h2>
+        <button type="button" class="modal-close" id="btn-close-modal" aria-label="Đóng">✕</button>
+      </div>
+
+      <form id="note-form">
+        <div class="modal-preview-wrap">
+          <div class="composer-paper color-yellow" id="composer-paper">
+            <div class="composer-pin-preview" id="composer-pin-preview"></div>
+            <div class="composer-meta-preview">
+              <div class="composer-tag-preview" id="composer-tag-preview">💼 Công việc</div>
+              <div class="composer-time-preview" id="composer-time-preview" hidden>⏰ --:--</div>
+            </div>
+            <textarea
+              id="note-input"
+              rows="4"
+              maxlength="600"
+              placeholder="Mỗi dòng là 1 đầu việc có ô tick riêng nha!&#10;VD:&#10;Hoàn thành báo cáo tuần&#10;Gửi email cho sếp&#10;Uống đủ 2 lít nước 💧"
+              required
+            ></textarea>
+            <div class="composer-paper-foot">
+              <span class="multiline-hint">↵ Xuống dòng để thêm nhiều việc trên cùng 1 note</span>
+              <span class="char-count"><span id="char-count">0</span>/600</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="composer-options">
+          <div class="option-row">
+            <span class="option-label">Màu giấy:</span>
+            <div class="color-swatches" id="color-swatches">
+              <button type="button" class="swatch active" data-color="yellow" style="--sw:#FFF3A8" aria-label="Vàng bơ"></button>
+              <button type="button" class="swatch" data-color="pink" style="--sw:#FFD4E2" aria-label="Hồng sakura"></button>
+              <button type="button" class="swatch" data-color="mint" style="--sw:#C9F2DE" aria-label="Xanh bạc hà"></button>
+              <button type="button" class="swatch" data-color="blue" style="--sw:#CCE8FF" aria-label="Xanh trời"></button>
+              <button type="button" class="swatch" data-color="lavender" style="--sw:#E6D4FF" aria-label="Tím oải hương"></button>
+              <button type="button" class="swatch" data-color="peach" style="--sw:#FFE0C2" aria-label="Cam đào"></button>
+            </div>
+          </div>
+
+          <div class="option-row option-row-stack">
+            <div class="option-input-head">
+              <span class="option-label">Nhãn / Mục:</span>
+              <input
+                type="text"
+                id="note-tag-input"
+                class="tag-text-input"
+                maxlength="24"
+                value="💼 Công việc"
+                placeholder="Tự nhập nhãn tùy thích (VD: Học bài, Đi chợ...)"
+                autocomplete="off"
+              />
+            </div>
+            <div class="tag-suggestions-wrap">
+              <span class="suggest-hint">Gợi ý nhanh:</span>
+              <div class="tag-pills" id="tag-pills">
+                <button type="button" class="tag-pill active" data-tag="💼 Công việc">💼 Công việc</button>
+                <button type="button" class="tag-pill" data-tag="🔥 Gấp nè">🔥 Gấp nè</button>
+                <button type="button" class="tag-pill" data-tag="🌸 Cá nhân">🌸 Cá nhân</button>
+                <button type="button" class="tag-pill" data-tag="💡 Ý tưởng">💡 Ý tưởng</button>
+                <button type="button" class="tag-pill" data-tag="📚 Học tập">📚 Học tập</button>
+                <button type="button" class="tag-pill" data-tag="🛒 Mua sắm">🛒 Mua sắm</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="option-row option-row-stack">
+            <div class="option-input-head">
+              <span class="option-label">Giờ nhắc:</span>
+              <div class="time-input-group">
+                <input type="time" id="note-time-input" class="time-input" aria-label="Chọn giờ nhắc trong ngày" />
+                <button type="button" class="time-clear-btn" id="btn-clear-time" title="Bỏ giờ nhắc" hidden>✕</button>
+              </div>
+            </div>
+            <div class="tag-suggestions-wrap">
+              <div class="time-quick-pills" id="time-quick-pills">
+                <button type="button" class="time-quick-pill" data-offset="1">+1 phút</button>
+                <button type="button" class="time-quick-pill" data-offset="15">+15 phút</button>
+                <button type="button" class="time-quick-pill" data-offset="30">+30 phút</button>
+                <button type="button" class="time-quick-pill" data-offset="60">+1 giờ</button>
+                <button type="button" class="time-quick-pill" data-fixed="15:00">15:00</button>
+                <button type="button" class="time-quick-pill" data-fixed="20:00">20:00</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="option-row">
+            <span class="option-label">Kiểu ghim:</span>
+            <div class="pin-pills" id="pin-pills">
+              <button type="button" class="pin-pill active" data-pin="pushpin">📍 Đinh ghim</button>
+              <button type="button" class="pin-pill" data-pin="tape">🎀 Băng keo washi</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="modal-btn secondary" id="btn-cancel-modal">Hủy</button>
+          <button type="submit" class="modal-btn primary">Dán lên bảng 📌</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Cute Confirmation Modal for Sweeping Completed Notes into Trash Bin -->
+  <div class="modal-backdrop" id="trash-modal-backdrop" hidden>
+    <div class="note-modal trash-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="trash-modal-title">
+      <div class="modal-header">
+        <h2 id="trash-modal-title">🗑️ Gom rác các tờ note đã xong?</h2>
+        <button type="button" class="modal-close" id="btn-close-trash-modal" aria-label="Đóng">✕</button>
+      </div>
+      <p class="trash-confirm-desc" id="trash-confirm-desc">
+        Bạn có đồng ý gom và xóa các tờ note đã hoàn thành này khỏi bảng không?
+      </p>
+      <ul class="trash-preview-list" id="trash-preview-list"></ul>
+      <div class="modal-actions">
+        <button type="button" class="modal-btn secondary" id="btn-cancel-trash">Để lại nha</button>
+        <button type="button" class="modal-btn primary" id="btn-confirm-trash">🗑️ Đồng ý xóa</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
