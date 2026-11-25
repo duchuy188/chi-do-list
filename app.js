@@ -158,6 +158,8 @@
 
   // Active ringing alarm note ID, drag state & freshly-stamped note ID
   let activeAlarmNoteId = null;
+  let alarmRingInterval = null;
+  let alarmRingTick = 0;
   let isDraggingAnyNote = false;
   let justStampedNoteId = null;
 
@@ -350,6 +352,30 @@
           osc.connect(gain).connect(audioCtx.destination);
           osc.start(now + offset);
           osc.stop(now + offset + 0.11);
+        });
+      } else if (type === 'ring') {
+        // Classic cute twin-bell desk clock "RENG-RENG! RENG-RENG!" trill
+        const bursts = [0, 0.34];
+        bursts.forEach((bOffset) => {
+          for (let hit = 0; hit < 5; hit++) {
+            const t = now + bOffset + hit * 0.048;
+            const osc = audioCtx.createOscillator();
+            const overtone = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            overtone.type = 'sine';
+            osc.frequency.setValueAtTime(hit % 2 === 0 ? 1180 : 1420, t);
+            overtone.frequency.setValueAtTime(hit % 2 === 0 ? 2360 : 2840, t);
+            gain.gain.setValueAtTime(0.11, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.045);
+            osc.connect(gain);
+            overtone.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(t);
+            overtone.start(t);
+            osc.stop(t + 0.048);
+            overtone.stop(t + 0.048);
+          }
         });
       } else if (type === 'alarm') {
         // Cheerful cute desk-clock melody when a daily reminder triggers!
@@ -772,6 +798,48 @@
     }
   }
 
+  function stopAlarmRingLoop() {
+    if (alarmRingInterval) {
+      clearInterval(alarmRingInterval);
+      alarmRingInterval = null;
+    }
+    alarmRingTick = 0;
+    if (!pomoState.running) {
+      document.title = DEFAULT_DOC_TITLE;
+    }
+  }
+
+  function startAlarmRingLoop(note) {
+    stopAlarmRingLoop();
+    alarmRingTick = 0;
+
+    // Ring right away, then keep ringing "reng reng" every 1.9s until user turns it off!
+    playCuteSound('ring');
+    if (!pomoState.running) {
+      document.title = `🔔 RENG RENG! (${note.remindTime}) — Chi-Do List`;
+    }
+
+    alarmRingInterval = setInterval(() => {
+      if (!activeAlarmNoteId || alarmToast.hidden) {
+        stopAlarmRingLoop();
+        return;
+      }
+      alarmRingTick += 1;
+      playCuteSound('ring');
+
+      if (!pomoState.running) {
+        document.title =
+          alarmRingTick % 2 === 0
+            ? `🔔 RENG RENG! (${note.remindTime}) — Chi-Do List`
+            : `⏰ Tới giờ rồi! — Chi-Do List`;
+      }
+
+      if (alarmRingTick % 2 === 0) {
+        spawnChiParticles(['🔔', '⏰'], 2);
+      }
+    }, 1900);
+  }
+
   function triggerReminderAlarm(note) {
     activeAlarmNoteId = note.id;
     note.remindedDate = getTodayKey();
@@ -783,7 +851,7 @@
     alarmToast.hidden = false;
 
     propDeskClock.classList.add('is-ringing');
-    playCuteSound('alarm');
+    startAlarmRingLoop(note);
     setChiMood('excited', 3200);
     spawnChiParticles(['⏰', '🔔', '🐾', '✨'], 7);
     chiSay(`Reng reng! Tới ${note.remindTime} rồi: "${summary}" ⏰🐾`, 7500);
@@ -804,6 +872,7 @@
   }
 
   function clearActiveAlarm() {
+    stopAlarmRingLoop();
     activeAlarmNoteId = null;
     alarmToast.hidden = true;
     propDeskClock.classList.remove('is-ringing');
@@ -1665,6 +1734,7 @@
     }
 
     if (note.done && activeAlarmNoteId === noteId) {
+      stopAlarmRingLoop();
       activeAlarmNoteId = null;
       alarmToast.hidden = true;
       propDeskClock.classList.remove('is-ringing');
@@ -1694,6 +1764,7 @@
       justStampedNoteId = note.id;
     }
     if (note.done && activeAlarmNoteId === id) {
+      stopAlarmRingLoop();
       activeAlarmNoteId = null;
       alarmToast.hidden = true;
       propDeskClock.classList.remove('is-ringing');
