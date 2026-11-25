@@ -145,6 +145,10 @@
     theme: 'day',
     sound: true,
     glasses: true,
+    noteAlarmSound: 'bark',
+    pomoAlarmSound: 'bark',
+    noteCustomName: '',
+    pomoCustomName: '',
   };
 
   // Composer state
@@ -166,13 +170,18 @@
 
   // AudioContext (lazily initialized on user gesture) & custom MP4 alarm + short bark clip
   let audioCtx = null;
-  const customAlarmAudio = new Audio('assets/alarm-bark.mp4');
+  const DEFAULT_BARK_SRC = 'assets/alarm-bark.mp4';
+  const customAlarmAudio = new Audio(DEFAULT_BARK_SRC);
   customAlarmAudio.loop = true;
   customAlarmAudio.preload = 'auto';
   customAlarmAudio.volume = 0.85;
   let customAlarmPlaying = false;
 
-  const customBarkClip = new Audio('assets/alarm-bark.mp4');
+  // Custom user-uploaded alarm Blob URLs persisted in IndexedDB (separate for note vs pomo)
+  const uploadedAlarmUrls = { note: '', pomo: '' };
+
+  // Original Chihuahua click bark (LOCKED — never changed by alarm settings!)
+  const customBarkClip = new Audio(DEFAULT_BARK_SRC);
   customBarkClip.preload = 'auto';
   customBarkClip.volume = 0.9;
   let barkClipTimer = null;
@@ -210,10 +219,11 @@
   const progressBarFill = document.getElementById('progress-bar-fill');
   const progressText = document.getElementById('progress-text');
 
-  const btnAddNote = document.getElementById('btn-add-note');
   const btnTidy = document.getElementById('btn-tidy');
   const btnSound = document.getElementById('btn-sound');
   const btnTheme = document.getElementById('btn-theme');
+  const btnSettings = document.getElementById('btn-settings');
+  const btnMobileAddNote = document.getElementById('btn-mobile-add-note');
   const filterBtns = document.querySelectorAll('.filter-btn');
 
   // Chihuahua & Desk Props
@@ -279,6 +289,21 @@
   const btnOkGuide = document.getElementById('btn-ok-guide');
   const guideTabs = document.querySelectorAll('.guide-tab');
   const guidePanels = document.querySelectorAll('.guide-panel');
+
+  // Sound Settings Modal Elements
+  const settingsModalBackdrop = document.getElementById('settings-modal-backdrop');
+  const btnCloseSettings = document.getElementById('btn-close-settings');
+  const btnDoneSettings = document.getElementById('btn-done-settings');
+  const noteSoundChoiceBtns = document.querySelectorAll('#note-sound-choices .sound-choice-btn');
+  const pomoSoundChoiceBtns = document.querySelectorAll('#pomo-sound-choices .sound-choice-btn');
+  const noteCustomPicker = document.getElementById('note-custom-picker');
+  const pomoCustomPicker = document.getElementById('pomo-custom-picker');
+  const inputNoteAudio = document.getElementById('input-note-audio');
+  const inputPomoAudio = document.getElementById('input-pomo-audio');
+  const noteCustomNameEl = document.getElementById('note-custom-name');
+  const pomoCustomNameEl = document.getElementById('pomo-custom-name');
+  const btnPreviewNoteSound = document.getElementById('btn-preview-note-sound');
+  const btnPreviewPomoSound = document.getElementById('btn-preview-pomo-sound');
 
   // Tomato Pomodoro Timer Elements
   const pomoWrap = document.getElementById('pomodoro-desk-wrap');
@@ -834,6 +859,76 @@
     }
   }
 
+  /* ========================================================================
+     IndexedDB Storage for Custom Uploaded Alarm Audio/Video Files
+     ======================================================================== */
+  const AUDIO_DB_NAME = 'chi_do_audio_db';
+  const AUDIO_STORE_NAME = 'clips';
+
+  function openAudioDb() {
+    return new Promise((resolve, reject) => {
+      if (!('indexedDB' in window)) {
+        reject(new Error('No IndexedDB'));
+        return;
+      }
+      const req = indexedDB.open(AUDIO_DB_NAME, 1);
+      req.onupgradeneeded = () => {
+        const db = req.result;
+        if (!db.objectStoreNames.contains(AUDIO_STORE_NAME)) {
+          db.createObjectStore(AUDIO_STORE_NAME);
+        }
+      };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async function saveCustomAudioBlob(key, blob) {
+    try {
+      const db = await openAudioDb();
+      await new Promise((resolve, reject) => {
+        const tx = db.transaction(AUDIO_STORE_NAME, 'readwrite');
+        tx.objectStore(AUDIO_STORE_NAME).put(blob, key);
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+      });
+    } catch {
+      // Ignore if IndexedDB blocked
+    }
+  }
+
+  async function loadCustomAudioBlobs() {
+    try {
+      const db = await openAudioDb();
+      for (const key of ['note', 'pomo']) {
+        const blob = await new Promise((resolve) => {
+          const tx = db.transaction(AUDIO_STORE_NAME, 'readonly');
+          const req = tx.objectStore(AUDIO_STORE_NAME).get(key);
+          req.onsuccess = () => resolve(req.result || null);
+          req.onerror = () => resolve(null);
+        });
+        if (blob) {
+          if (uploadedAlarmUrls[key]) URL.revokeObjectURL(uploadedAlarmUrls[key]);
+          uploadedAlarmUrls[key] = URL.createObjectURL(blob);
+        }
+      }
+      renderSettingsUI();
+    } catch {
+      // Ignore
+    }
+  }
+
+  function getSelectedAlarmMode(source) {
+    return source === 'pomo' ? (settings.pomoAlarmSound || 'bark') : (settings.noteAlarmSound || 'bark');
+  }
+
+  function getAlarmMediaSrc(source) {
+    const mode = getSelectedAlarmMode(source);
+    if (mode === 'bark') return DEFAULT_BARK_SRC;
+    if (mode === 'custom' && uploadedAlarmUrls[source]) return uploadedAlarmUrls[source];
+    return null; // 'ring' or custom without uploaded file -> use synthesized twin-bell ring
+  }
+
   function stopAlarmRingLoop() {
     if (alarmRingInterval) {
       clearInterval(alarmRingInterval);
@@ -852,9 +947,19 @@
     }
   }
 
-  function playCustomAlarmAudio() {
+  function playActiveAlarmAudio(source = activeAlarmSource || 'note') {
     if (!settings.sound) return;
+    const src = getAlarmMediaSrc(source);
+    if (!src) {
+      customAlarmPlaying = false;
+      playCuteSound('ring');
+      return;
+    }
     try {
+      if (customAlarmAudio.dataset.loadedSrc !== src) {
+        customAlarmAudio.src = src;
+        customAlarmAudio.dataset.loadedSrc = src;
+      }
       customAlarmAudio.currentTime = 0;
       const playPromise = customAlarmAudio.play();
       customAlarmPlaying = true;
@@ -874,8 +979,8 @@
     stopAlarmRingLoop();
     alarmRingTick = 0;
 
-    // Loop custom MP4 dog bark sound continuously until the user dismisses it!
-    playCustomAlarmAudio();
+    // Loop selected sound (bark / ring / custom uploaded file) until dismissed!
+    playActiveAlarmAudio(activeAlarmSource || 'note');
     if (!pomoState.running) {
       document.title = `🔔 ${label} — Chi-Do List`;
     }
@@ -887,16 +992,22 @@
       }
       alarmRingTick += 1;
 
-      // Fallback synthesized bell only if MP4 audio isn't playing while sound is enabled
-      if (settings.sound && (!customAlarmPlaying || customAlarmAudio.paused)) {
-        playCuteSound('ring');
+      const mediaSrc = getAlarmMediaSrc(activeAlarmSource);
+      if (settings.sound) {
+        if (!mediaSrc) {
+          // Synthesized twin-bell "reng reng" mode
+          playCuteSound('ring');
+        } else if (!customAlarmPlaying || customAlarmAudio.paused) {
+          // Fallback if media was blocked or paused unexpectedly
+          playCuteSound('ring');
+        }
       }
 
       if (!pomoState.running) {
         document.title =
           alarmRingTick % 2 === 0
             ? `🔔 ${label} — Chi-Do List`
-            : `🐶 Gâu gâu! Tới giờ rồi! — Chi-Do List`;
+            : `🔔 Tới giờ rồi! — Chi-Do List`;
       }
 
       if (alarmRingTick % 2 === 0) {
@@ -1058,7 +1169,7 @@
     if (visible.length === 0) {
       emptyHint.hidden = false;
       if (notes.length === 0) {
-        emptyHintText.innerHTML = 'Bảng đang trống nè! Nhấn <strong>Dán note</strong> hoặc nhấp đúp lên bảng để thêm việc mới nha~';
+        emptyHintText.innerHTML = 'Bảng đang trống nè! Nhấn xấp <strong>+ Note</strong> trên bàn hoặc nhấp đúp lên bảng để thêm việc mới nha~';
       } else if (activeFilter === 'active') {
         emptyHintText.innerHTML = 'Tuyệt vời! Không còn việc nào đang dang dở hết! 🎉🐾';
       } else {
@@ -2117,7 +2228,9 @@
   /* ========================================================================
      Event Listeners for Toolbar, Board & Office Desk Props
      ======================================================================== */
-  btnAddNote.addEventListener('click', () => openComposer());
+  if (btnMobileAddNote) {
+    btnMobileAddNote.addEventListener('click', () => openComposer());
+  }
   btnCloseModal.addEventListener('click', closeComposer);
   btnCancelModal.addEventListener('click', closeComposer);
   modalBackdrop.addEventListener('click', (e) => {
@@ -2129,6 +2242,7 @@
       if (!modalBackdrop.hidden) closeComposer();
       if (!trashModalBackdrop.hidden) closeTrashConfirmModal();
       if (!guideModalBackdrop.hidden) closeGuideModal();
+      if (!settingsModalBackdrop.hidden) closeSettingsModal();
       if (!pomoPopover.hidden) pomoPopover.hidden = true;
       if (!musicPopover.classList.contains('is-closed')) musicPopover.classList.add('is-closed');
     }
@@ -2166,7 +2280,7 @@
     saveSettings();
     if (settings.sound) {
       if (activeAlarmSource && !alarmToast.hidden) {
-        playCustomAlarmAudio();
+        playActiveAlarmAudio(activeAlarmSource);
       } else {
         playCuteSound('pin');
       }
@@ -2558,6 +2672,169 @@
       playCuteSound('click');
     });
   });
+
+  /* ========================================================================
+     Sound Settings Modal (Separate Note Reminder & Pomodoro Alarm Sounds)
+     ======================================================================== */
+  const previewAudio = new Audio();
+  let activePreviewTarget = null;
+  let previewAutoStopTimer = null;
+
+  function stopSoundPreview() {
+    clearTimeout(previewAutoStopTimer);
+    previewAutoStopTimer = null;
+    try {
+      previewAudio.pause();
+      previewAudio.currentTime = 0;
+    } catch {
+      // Ignore
+    }
+    activePreviewTarget = null;
+    btnPreviewNoteSound.textContent = '▶ Nghe thử';
+    btnPreviewNoteSound.classList.remove('is-playing');
+    btnPreviewPomoSound.textContent = '▶ Nghe thử';
+    btnPreviewPomoSound.classList.remove('is-playing');
+  }
+
+  function toggleSoundPreview(target) {
+    if (activePreviewTarget === target) {
+      stopSoundPreview();
+      return;
+    }
+    stopSoundPreview();
+
+    const btn = target === 'pomo' ? btnPreviewPomoSound : btnPreviewNoteSound;
+    const src = getAlarmMediaSrc(target);
+    activePreviewTarget = target;
+    btn.textContent = '⏹ Dừng';
+    btn.classList.add('is-playing');
+
+    if (!src) {
+      // Preview synthesized twin-bell "reng reng"
+      playCuteSound('ring');
+      previewAutoStopTimer = setTimeout(stopSoundPreview, 900);
+      return;
+    }
+
+    try {
+      previewAudio.src = src;
+      previewAudio.currentTime = 0;
+      previewAudio.volume = 0.85;
+      const p = previewAudio.play();
+      if (p && typeof p.catch === 'function') {
+        p.catch(() => {
+          playCuteSound('ring');
+          stopSoundPreview();
+        });
+      }
+      previewAutoStopTimer = setTimeout(stopSoundPreview, 4500);
+    } catch {
+      playCuteSound('ring');
+      stopSoundPreview();
+    }
+  }
+
+  previewAudio.addEventListener('ended', stopSoundPreview);
+
+  function renderSettingsUI() {
+    const noteMode = settings.noteAlarmSound || 'bark';
+    const pomoMode = settings.pomoAlarmSound || 'bark';
+
+    noteSoundChoiceBtns.forEach((b) => {
+      b.classList.toggle('active', b.dataset.sound === noteMode);
+    });
+    pomoSoundChoiceBtns.forEach((b) => {
+      b.classList.toggle('active', b.dataset.sound === pomoMode);
+    });
+
+    noteCustomPicker.hidden = noteMode !== 'custom';
+    pomoCustomPicker.hidden = pomoMode !== 'custom';
+
+    noteCustomNameEl.textContent =
+      uploadedAlarmUrls.note && settings.noteCustomName
+        ? `🎵 Đang dùng: ${settings.noteCustomName}`
+        : 'Chưa chọn file (tạm dùng chuông reng reng)';
+
+    pomoCustomNameEl.textContent =
+      uploadedAlarmUrls.pomo && settings.pomoCustomName
+        ? `🎵 Đang dùng: ${settings.pomoCustomName}`
+        : 'Chưa chọn file (tạm dùng chuông reng reng)';
+  }
+
+  function openSettingsModal() {
+    playCuteSound('click');
+    renderSettingsUI();
+    settingsModalBackdrop.hidden = false;
+  }
+
+  function closeSettingsModal() {
+    stopSoundPreview();
+    settingsModalBackdrop.hidden = true;
+  }
+
+  btnSettings.addEventListener('click', openSettingsModal);
+  btnCloseSettings.addEventListener('click', closeSettingsModal);
+  btnDoneSettings.addEventListener('click', () => {
+    playCuteSound('pin');
+    closeSettingsModal();
+    chiSay('Đã lưu cài đặt chuông báo của bạn rồi nha! ⚙️🐾', 3400);
+  });
+  settingsModalBackdrop.addEventListener('click', (e) => {
+    if (e.target === settingsModalBackdrop) closeSettingsModal();
+  });
+
+  noteSoundChoiceBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      stopSoundPreview();
+      settings.noteAlarmSound = btn.dataset.sound;
+      saveSettings();
+      renderSettingsUI();
+      playCuteSound('click');
+    });
+  });
+
+  pomoSoundChoiceBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      stopSoundPreview();
+      settings.pomoAlarmSound = btn.dataset.sound;
+      saveSettings();
+      renderSettingsUI();
+      playCuteSound('click');
+    });
+  });
+
+  inputNoteAudio.addEventListener('change', async () => {
+    const file = inputNoteAudio.files?.[0];
+    if (!file) return;
+    stopSoundPreview();
+    if (uploadedAlarmUrls.note) URL.revokeObjectURL(uploadedAlarmUrls.note);
+    uploadedAlarmUrls.note = URL.createObjectURL(file);
+    settings.noteCustomName = file.name;
+    settings.noteAlarmSound = 'custom';
+    saveSettings();
+    await saveCustomAudioBlob('note', file);
+    renderSettingsUI();
+    playCuteSound('pin');
+    inputNoteAudio.value = '';
+  });
+
+  inputPomoAudio.addEventListener('change', async () => {
+    const file = inputPomoAudio.files?.[0];
+    if (!file) return;
+    stopSoundPreview();
+    if (uploadedAlarmUrls.pomo) URL.revokeObjectURL(uploadedAlarmUrls.pomo);
+    uploadedAlarmUrls.pomo = URL.createObjectURL(file);
+    settings.pomoCustomName = file.name;
+    settings.pomoAlarmSound = 'custom';
+    saveSettings();
+    await saveCustomAudioBlob('pomo', file);
+    renderSettingsUI();
+    playCuteSound('pin');
+    inputPomoAudio.value = '';
+  });
+
+  btnPreviewNoteSound.addEventListener('click', () => toggleSoundPreview('note'));
+  btnPreviewPomoSound.addEventListener('click', () => toggleSoundPreview('pomo'));
 
   /* ========================================================================
      Cute Tomato Pomodoro Timer (Drift-Free Wall-Clock Countdown)
@@ -3403,6 +3680,8 @@
      Initialize App
      ======================================================================== */
   loadState();
+  loadCustomAudioBlobs();
+  renderSettingsUI();
   loadPomoStats();
   renderPomoUI();
   renderNotes();

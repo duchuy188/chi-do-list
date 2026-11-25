@@ -495,6 +495,150 @@ body.theme-night .fairy-bulb .bulb-halo {
   display: none;
 }
 
+.mobile-fab-add {
+  display: none;
+}
+
+/* Sound Settings Modal Styling */
+.settings-modal {
+  max-width: 440px;
+}
+
+.settings-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.setting-group {
+  padding: 12px 13px;
+  border-radius: 16px;
+  background: #FFF6EA;
+  border: 1.8px solid #EBD3BC;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.setting-group-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.setting-group-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #4D3327;
+}
+
+.setting-preview-btn {
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1.6px solid #DFC2A4;
+  background: #FFFDF9;
+  color: #6B4A38;
+  font-family: inherit;
+  font-size: 0.74rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.setting-preview-btn:hover {
+  background: #FFE5EA;
+  border-color: #EE889B;
+  color: #B93558;
+}
+
+.setting-preview-btn.is-playing {
+  background: linear-gradient(135deg, #FF8FA3, #FF6F88);
+  border-color: #E2546E;
+  color: #FFFFFF;
+}
+
+.sound-choice-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.sound-choice-btn {
+  padding: 7px 6px;
+  border-radius: 12px;
+  border: 1.8px solid #E5CEB8;
+  background: #FFFDF9;
+  color: #6B4A38;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sound-choice-btn:hover {
+  border-color: #D99B66;
+}
+
+.sound-choice-btn.active {
+  background: #FFE2EC;
+  border-color: #FF8DA8;
+  color: #B93558;
+  box-shadow: 0 2px 6px rgba(238, 93, 117, 0.16);
+}
+
+.custom-sound-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 2px;
+}
+
+.custom-sound-picker[hidden] {
+  display: none;
+}
+
+.custom-file-btn {
+  display: block;
+  padding: 7px 10px;
+  border-radius: 11px;
+  border: 1.8px dashed #D9A579;
+  background: #FFFDF9;
+  color: #5A3E32;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.custom-file-btn:hover {
+  background: #FFEBF0;
+  border-color: #FF8DA8;
+}
+
+.custom-file-name {
+  font-size: 0.73rem;
+  font-weight: 700;
+  color: #8E6A56;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.settings-locked-note {
+  padding: 8px 11px;
+  border-radius: 12px;
+  background: #FFF0F3;
+  border: 1.5px dashed #EE889B;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #8A3A4B;
+  line-height: 1.38;
+}
+
 /* Compact Illustrated Visual Guide Modal (Zero wall of text!) */
 .guide-modal {
   max-width: 440px;
@@ -3642,6 +3786,26 @@ body.theme-night .lamp-bulb-svg {
 
   .mobile-guide-btn {
     display: inline-flex;
+  }
+
+  .mobile-fab-add {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    position: absolute;
+    right: 12px;
+    bottom: 48px;
+    z-index: 18;
+    padding: 8px 13px;
+    border-radius: 999px;
+    border: 2px solid #E2546E;
+    background: linear-gradient(135deg, #FF8FA3, #FF6F88);
+    color: #FFFFFF;
+    font-family: inherit;
+    font-size: 0.84rem;
+    font-weight: 700;
+    box-shadow: 0 5px 14px rgba(226, 84, 110, 0.36);
+    cursor: pointer;
   }
 
   /* Corkboard fills vertical viewport nicely above compact mobile desk */

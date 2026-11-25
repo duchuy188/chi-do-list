@@ -44,16 +44,16 @@
           <span>✨</span><span class="btn-label">Xếp gọn</span>
         </button>
 
-        <button class="tool-btn primary-btn" id="btn-add-note" title="Dán một tờ note mới lên bảng">
-          <span>📌</span><span class="btn-label">Dán note</span>
-        </button>
-
         <button class="icon-btn" id="btn-sound" title="Bật / tắt âm thanh dễ thương" aria-label="Bật hoặc tắt âm thanh">
           🔊
         </button>
 
         <button class="icon-btn" id="btn-theme" title="Chuyển chế độ Ban ngày / Ban đêm ấm áp" aria-label="Đổi chế độ sáng tối">
           ☀️
+        </button>
+
+        <button class="icon-btn" id="btn-settings" title="Cài đặt chuông nhắc việc & Pomodoro ⚙️" aria-label="Mở cài đặt âm thanh">
+          ⚙️
         </button>
 
         <button class="icon-btn mobile-guide-btn" id="btn-mobile-guide" title="Xem hướng dẫn sử dụng" aria-label="Xem hướng dẫn sử dụng">
@@ -130,8 +130,13 @@
           <!-- Empty state hint when no notes match filter -->
           <div class="board-empty-hint" id="board-empty-hint" hidden>
             <div class="empty-icon">📌</div>
-            <p id="empty-hint-text">Bảng đang trống nè! Nhấn <strong>Dán note</strong> hoặc nhấp đúp lên bảng để thêm việc mới nha~</p>
+            <p id="empty-hint-text">Bảng đang trống nè! Nhấn xấp <strong>+ Note</strong> trên bàn hoặc nhấp đúp lên bảng để thêm việc mới nha~</p>
           </div>
+
+          <!-- Floating quick-add button shown only on mobile (where desk sticky pad is hidden) -->
+          <button type="button" class="mobile-fab-add" id="btn-mobile-add-note" title="Dán tờ note mới" aria-label="Dán tờ note mới">
+            📌 +
+          </button>
 
           <!-- Subtle hint on board -->
           <div class="board-tip" aria-hidden="true">💡 Cuộn dọc bảng khi nhiều note • Kéo note vào miệng Chihuahua để xóa 🐶 • Xoa đầu cún để vuốt ve ✋</div>
@@ -1067,6 +1072,62 @@
       <div class="guide-bottom-bar">
         <span class="guide-save-mini">💾 Tự lưu trong trình duyệt</span>
         <button type="button" class="modal-btn primary" id="btn-ok-guide">Okie, hiểu rồi! 🐾</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cute Sound Settings Modal (Configure Note Reminder & Pomodoro Alarm Sounds!) -->
+  <div class="modal-backdrop" id="settings-modal-backdrop" hidden>
+    <div class="note-modal settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title">
+      <div class="modal-header">
+        <h2 id="settings-modal-title">⚙️ Cài Đặt Chuông Báo</h2>
+        <button type="button" class="modal-close" id="btn-close-settings" aria-label="Đóng cài đặt">✕</button>
+      </div>
+
+      <div class="settings-body">
+        <!-- Setting 1: Note Reminder Alarm Sound -->
+        <div class="setting-group" data-alarm-target="note">
+          <div class="setting-group-head">
+            <span class="setting-group-title">⏰ Chuông nhắc việc tới giờ</span>
+            <button type="button" class="setting-preview-btn" id="btn-preview-note-sound" data-preview="note">▶ Nghe thử</button>
+          </div>
+          <div class="sound-choice-row" id="note-sound-choices">
+            <button type="button" class="sound-choice-btn" data-sound="bark">🐶 Chó sủa</button>
+            <button type="button" class="sound-choice-btn" data-sound="ring">🔔 Reng reng</button>
+            <button type="button" class="sound-choice-btn" data-sound="custom">🎵 File riêng</button>
+          </div>
+          <div class="custom-sound-picker" id="note-custom-picker" hidden>
+            <label class="custom-file-btn" for="input-note-audio">📂 Chọn file (.mp3 / .mp4 / .wav)</label>
+            <input type="file" id="input-note-audio" accept="audio/*,video/mp4,video/webm" hidden />
+            <span class="custom-file-name" id="note-custom-name">Chưa chọn file (sẽ dùng reng reng)</span>
+          </div>
+        </div>
+
+        <!-- Setting 2: Pomodoro Alarm Sound -->
+        <div class="setting-group" data-alarm-target="pomo">
+          <div class="setting-group-head">
+            <span class="setting-group-title">🍅 Chuông hết giờ Pomodoro</span>
+            <button type="button" class="setting-preview-btn" id="btn-preview-pomo-sound" data-preview="pomo">▶ Nghe thử</button>
+          </div>
+          <div class="sound-choice-row" id="pomo-sound-choices">
+            <button type="button" class="sound-choice-btn" data-sound="bark">🐶 Chó sủa</button>
+            <button type="button" class="sound-choice-btn" data-sound="ring">🔔 Reng reng</button>
+            <button type="button" class="sound-choice-btn" data-sound="custom">🎵 File riêng</button>
+          </div>
+          <div class="custom-sound-picker" id="pomo-custom-picker" hidden>
+            <label class="custom-file-btn" for="input-pomo-audio">📂 Chọn file (.mp3 / .mp4 / .wav)</label>
+            <input type="file" id="input-pomo-audio" accept="audio/*,video/mp4,video/webm" hidden />
+            <span class="custom-file-name" id="pomo-custom-name">Chưa chọn file (sẽ dùng reng reng)</span>
+          </div>
+        </div>
+
+        <div class="settings-locked-note">
+          🐾 <strong>Lưu ý:</strong> Tiếng sủa khi bấm trực tiếp vào <strong>Sếp Chihuahua</strong> luôn giữ nguyên bản không thay đổi nhé!
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="modal-btn primary" id="btn-done-settings">Xong rồi ✓</button>
       </div>
     </div>
   </div>
