@@ -3155,19 +3155,19 @@ body.theme-night .lamp-bulb-svg {
 
 .chihuahua-avatar.mood-bark .chi-mouth-open {
   opacity: 1;
-  animation: chiBarkMouth 0.21s ease-in-out 2;
+  animation: chiBarkMouth 0.24s ease-in-out 4;
 }
 
 .chihuahua-avatar.mood-bark .chi-head-group {
-  animation: chiBarkHead 0.21s ease-in-out 2;
+  animation: chiBarkHead 0.24s ease-in-out 4;
 }
 
 .chihuahua-avatar.mood-bark .chi-ear-left {
-  animation: chiBarkEarL 0.21s ease-in-out 2;
+  animation: chiBarkEarL 0.24s ease-in-out 4;
 }
 
 .chihuahua-avatar.mood-bark .chi-ear-right {
-  animation: chiBarkEarR 0.21s ease-in-out 2;
+  animation: chiBarkEarR 0.24s ease-in-out 4;
 }
 
 .chihuahua-avatar.mood-bark .chi-tail {

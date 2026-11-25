@@ -163,13 +163,42 @@
   let isDraggingAnyNote = false;
   let justStampedNoteId = null;
 
-  // AudioContext (lazily initialized on user gesture) & custom MP4 alarm audio
+  // AudioContext (lazily initialized on user gesture) & custom MP4 alarm + short bark clip
   let audioCtx = null;
   const customAlarmAudio = new Audio('assets/alarm-bark.mp4');
   customAlarmAudio.loop = true;
   customAlarmAudio.preload = 'auto';
   customAlarmAudio.volume = 0.85;
   let customAlarmPlaying = false;
+
+  const customBarkClip = new Audio('assets/alarm-bark.mp4');
+  customBarkClip.preload = 'auto';
+  customBarkClip.volume = 0.9;
+  let barkClipTimer = null;
+
+  function playRealChihuahuaBarkClip() {
+    if (!settings.sound) return;
+    clearTimeout(barkClipTimer);
+    try {
+      customBarkClip.pause();
+      customBarkClip.currentTime = 0.05;
+      const p = customBarkClip.play();
+      if (p && typeof p.catch === 'function') {
+        p.catch(() => playCuteSound('bark'));
+      }
+      // Trim cleanly to the first ~1.15s energetic Chihuahua bark burst from the video!
+      barkClipTimer = setTimeout(() => {
+        try {
+          customBarkClip.pause();
+          customBarkClip.currentTime = 0.05;
+        } catch {
+          // Ignore
+        }
+      }, 1150);
+    } catch {
+      playCuteSound('bark');
+    }
+  }
 
   // DOM References
   const boardCanvas = document.getElementById('board-canvas');
@@ -2327,7 +2356,7 @@
     }
   });
 
-  // Click/tap Chihuahua -> Sủa "Gâu! Gâu!" cực dễ thương!
+  // Click/tap Chihuahua -> Sủa "Gâu! Gâu!" bằng đoạn đầu video Chihuahua thật!
   chihuahuaEl.addEventListener('click', () => {
     // Only skip bark if user was dragging a finger to rub on touchscreen
     if (touchDragDist > 16) {
@@ -2335,15 +2364,16 @@
       return;
     }
     clearTimeout(petIdleTimer);
-    playCuteSound('bark');
+    playRealChihuahuaBarkClip();
 
     // Restart bark CSS animation cleanly even on rapid repeated clicks
     chihuahuaEl.classList.remove('mood-bark');
     void chihuahuaEl.offsetWidth;
-    setChiMood('bark', 560);
+    setChiMood('bark', 1050);
 
     spawnBarkPop('Gâu!', 66, 48, 22, 10, 0);
-    spawnBarkPop('Gâu!', 16, 44, -24, -10, 200);
+    spawnBarkPop('Gâu!', 16, 44, -24, -10, 260);
+    spawnBarkPop('Gâu!', 68, 36, 20, 8, 560);
     spawnChiParticles(['🐾', '✨'], 3);
     chiSay(pickRandom(BARK_LINES), 3800);
   });
