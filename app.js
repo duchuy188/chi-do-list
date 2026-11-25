@@ -116,6 +116,31 @@
     'Kero kero! Bảng kẻ ô gọn gàng đẹp mắt quá đi! 🌿💚',
   ];
 
+  const PIG_OINK_LINES = [
+    'Ủn ỉn!! Sếp Heo Hồng tròn vo có mặt trực bàn đây! 🐷🍑',
+    'Éc éc~! Làm xong việc rồi đi ăn bánh kem dâu nha đồng nghiệp! 🍰✨',
+    'Ủn ỉn! Ai vừa chạm vào mũi hồng của Sếp Heo thế?! 🐷💖',
+    'Ủn ỉn~ Cố lên nha, thưởng bạn 100 điểm siêu đáng yêu! 🌸✨',
+  ];
+
+  const PIG_HEAD_RUB_LINES = [
+    'Ủn ỉn~ Xoa cái đầu tròn vo êm quá trời ơi! 🐷💖',
+    'Sướng rơn luôn á~ Đuôi xoăn của Sếp Heo quay tít mù rồi nè! 🌀🥰',
+    'Hihi nhột tai quá~ Đồng nghiệp xoa đầu mát tay ghê! 🍑✨',
+  ];
+
+  const PIG_EAT_LINES = [
+    'Ủn ỉn~ Tờ note thơm ngon như bánh dâu tây luôn! 🍓😋',
+    'Ngoàm ngoàm~ Sếp Heo ăn sạch tờ note giúp bạn rồi nè! 🐷📄',
+    'Éc~ Bụng tròn của Sếp Heo đã dọn gọn tờ note không dấu vết! 💖✨',
+  ];
+
+  const PIG_DONE_LINES = [
+    'Ủn ỉn!! Giỏi quá trời ơi! Đóng mộc Sếp Heo Hồng duyệt ngay! 🐷🎉',
+    'Xuất sắc luôn! Xong thêm 1 việc rồi, ăn mừng bằng bánh ngọt thôi~ 🍰✨',
+    'Đỉnh quá đồng nghiệp ơi! Bảng hồng dâu gọn đẹp quá đi! 🌸💖',
+  ];
+
   // Default sample notes so the corkboard looks cozy & lively on first open
   const DEFAULT_NOTES = [
     {
@@ -210,9 +235,14 @@
     return settings.pet === 'frog';
   }
 
+  function isPigMode() {
+    return settings.pet === 'pig';
+  }
+
   function getDefaultDocTitle() {
     if (isCowMode()) return 'Moo-Do List 🐮 — Bảng Note Văn Phòng Của Bò Sữa';
     if (isFrogMode()) return 'Kero-Do List 🐸 — Bảng Note Văn Phòng Của Ếch Xanh';
+    if (isPigMode()) return 'Oink-Do List 🐷 — Bảng Note Văn Phòng Của Heo Hồng';
     return DEFAULT_DOC_TITLE;
   }
 
@@ -297,11 +327,12 @@
   const nameplateSubEl = document.getElementById('nameplate-sub');
   const filterBtns = document.querySelectorAll('.filter-btn');
 
-  // Chihuahua / Cow / Frog & Desk Props
+  // Chihuahua / Cow / Frog / Pig & Desk Props
   const chihuahuaEl = document.getElementById('chihuahua');
   const chihuahuaSvgEl = document.getElementById('chihuahua-svg');
   const cowSvgEl = document.getElementById('cow-svg');
   const frogSvgEl = document.getElementById('frog-svg');
+  const pigSvgEl = document.getElementById('pig-svg');
   const pettingHandEl = document.getElementById('petting-hand');
   const chiSpeechBubble = document.getElementById('chi-speech-bubble');
   const chiSpeechText = document.getElementById('chi-speech-text');
@@ -558,6 +589,47 @@
         nGain.gain.exponentialRampToValueAtTime(0.001, now + 0.045);
         noise.connect(nFilter).connect(nGain).connect(audioCtx.destination);
         noise.start(now);
+      } else if (type === 'oink') {
+        // Cute bouncy double piggy snort "Ủn! Ỉn!" (Oink! Oink!)
+        const oinks = [
+          { offset: 0, startF: 175, peakF: 295, endF: 145 },
+          { offset: 0.22, startF: 215, peakF: 355, endF: 170 },
+        ];
+        oinks.forEach((o) => {
+          const t = now + o.offset;
+          const osc = audioCtx.createOscillator();
+          const mod = audioCtx.createOscillator();
+          const modGain = audioCtx.createGain();
+          const filter = audioCtx.createBiquadFilter();
+          const gain = audioCtx.createGain();
+
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(o.startF, t);
+          osc.frequency.exponentialRampToValueAtTime(o.peakF, t + 0.065);
+          osc.frequency.exponentialRampToValueAtTime(o.endF, t + 0.145);
+
+          // Nasal snort flutter
+          mod.type = 'sine';
+          mod.frequency.setValueAtTime(56, t);
+          modGain.gain.setValueAtTime(22, t);
+          mod.connect(modGain).connect(osc.frequency);
+
+          filter.type = 'bandpass';
+          filter.frequency.setValueAtTime(540, t);
+          filter.frequency.exponentialRampToValueAtTime(920, t + 0.07);
+          filter.frequency.exponentialRampToValueAtTime(420, t + 0.145);
+          filter.Q.setValueAtTime(3.0, t);
+
+          gain.gain.setValueAtTime(0.001, t);
+          gain.gain.linearRampToValueAtTime(0.24, t + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+
+          osc.connect(filter).connect(gain).connect(audioCtx.destination);
+          osc.start(t);
+          mod.start(t);
+          osc.stop(t + 0.17);
+          mod.stop(t + 0.17);
+        });
       } else if (type === 'ribbit') {
         // Playful bubbly double frog croak "Ộp! Ộp!" (Ribbit!)
         const croaks = [
@@ -862,14 +934,17 @@
   function applySettings() {
     const cow = isCowMode();
     const frog = isFrogMode();
+    const pig = isPigMode();
     document.body.classList.toggle('theme-night', settings.theme === 'night');
     document.body.classList.toggle('theme-day', settings.theme !== 'night');
     document.body.classList.toggle('pet-cow', cow);
     document.body.classList.toggle('pet-frog', frog);
+    document.body.classList.toggle('pet-pig', pig);
 
-    if (chihuahuaSvgEl) chihuahuaSvgEl.style.display = !cow && !frog ? 'block' : 'none';
+    if (chihuahuaSvgEl) chihuahuaSvgEl.style.display = !cow && !frog && !pig ? 'block' : 'none';
     if (cowSvgEl) cowSvgEl.style.display = cow ? 'block' : 'none';
     if (frogSvgEl) frogSvgEl.style.display = frog ? 'block' : 'none';
+    if (pigSvgEl) pigSvgEl.style.display = pig ? 'block' : 'none';
 
     btnTheme.textContent = settings.theme === 'night' ? '🌙' : '☀️';
     btnSound.textContent = settings.sound ? '🔊' : '🔇';
@@ -884,9 +959,15 @@
     } else if (frog) {
       brandIconEl.textContent = '🐸';
       brandTitleEl.textContent = 'Kero-Do List';
-      petSwitchLabel.textContent = '🐶 Đổi Chihuahua';
+      petSwitchLabel.textContent = '🐷 Đổi Heo Hồng';
       nameplateRoleEl.textContent = 'SẾP ẾCH XANH';
       nameplateSubEl.textContent = '🪷 Chuyên gia nhắc việc';
+    } else if (pig) {
+      brandIconEl.textContent = '🐷';
+      brandTitleEl.textContent = 'Oink-Do List';
+      petSwitchLabel.textContent = '🐶 Đổi Chihuahua';
+      nameplateRoleEl.textContent = 'SẾP HEO HỒNG';
+      nameplateSubEl.textContent = '🍑 Chuyên gia nhắc việc';
     } else {
       brandIconEl.textContent = '🐾';
       brandTitleEl.textContent = 'Chi-Do List';
@@ -1396,7 +1477,9 @@
       ? '★ SẾP BÒ SỮA ★'
       : isFrogMode()
         ? '★ SẾP ẾCH XANH ★'
-        : '★ SẾP CHIHUAHUA ★';
+        : isPigMode()
+          ? '★ SẾP HEO HỒNG ★'
+          : '★ SẾP CHIHUAHUA ★';
     const wrap = document.createElement('div');
     wrap.className = `note-rubber-stamp${animate ? ' stamp-animate' : ''}`;
     wrap.setAttribute('aria-hidden', 'true');
@@ -1684,11 +1767,15 @@
         ? ['😋', '🐮', '🌿', '📄', '💙']
         : isFrogMode()
           ? ['😋', '🐸', '🪷', '📄', '💚']
-          : ['😋', '🐾', '✨', '📄', '💖'],
+          : isPigMode()
+            ? ['😋', '🐷', '🍓', '📄', '💖']
+            : ['😋', '🐾', '✨', '📄', '💖'],
       7
     );
     chiSay(
-      pickRandom(isCowMode() ? COW_EAT_LINES : isFrogMode() ? FROG_EAT_LINES : EAT_LINES),
+      pickRandom(
+        isCowMode() ? COW_EAT_LINES : isFrogMode() ? FROG_EAT_LINES : isPigMode() ? PIG_EAT_LINES : EAT_LINES
+      ),
       4200
     );
 
@@ -2104,11 +2191,15 @@
             ? ['✨', '🥛', '🐮', '💙']
             : isFrogMode()
               ? ['✨', '🍵', '🐸', '💚']
-              : ['✨', '💖', '🐾', '🦴'],
+              : isPigMode()
+                ? ['✨', '🍰', '🐷', '💖']
+                : ['✨', '💖', '🐾', '🦴'],
           6
         );
         chiSay(
-          pickRandom(isCowMode() ? COW_DONE_LINES : isFrogMode() ? FROG_DONE_LINES : DONE_LINES),
+          pickRandom(
+            isCowMode() ? COW_DONE_LINES : isFrogMode() ? FROG_DONE_LINES : isPigMode() ? PIG_DONE_LINES : DONE_LINES
+          ),
           4200
         );
       }
@@ -2626,7 +2717,13 @@
         if (rubSayAccum > sayThresh) {
           chiSay(
             pickRandom(
-              isCowMode() ? COW_HEAD_RUB_LINES : isFrogMode() ? FROG_HEAD_RUB_LINES : HEAD_RUB_LINES
+              isCowMode()
+                ? COW_HEAD_RUB_LINES
+                : isFrogMode()
+                  ? FROG_HEAD_RUB_LINES
+                  : isPigMode()
+                    ? PIG_HEAD_RUB_LINES
+                    : HEAD_RUB_LINES
             ),
             3800
           );
@@ -2728,6 +2825,13 @@
       spawnBarkPop('Ộp!', 16, 40, -24, -10, 230);
       spawnChiParticles(['🐸', '🪷', '✨'], 4);
       chiSay(pickRandom(FROG_RIBBIT_LINES), 3800);
+    } else if (isPigMode()) {
+      playCuteSound('oink');
+      setChiMood('bark', 760);
+      spawnBarkPop('Ủn ỉn!', 64, 46, 22, 10, 0);
+      spawnBarkPop('Éc!', 18, 42, -22, -10, 220);
+      spawnChiParticles(['🐷', '🍑', '💖'], 4);
+      chiSay(pickRandom(PIG_OINK_LINES), 3800);
     } else {
       playRealChihuahuaBarkClip();
       setChiMood('bark', 1050);
@@ -2746,7 +2850,13 @@
     saveSettings();
     playCuteSound('click');
     spawnChiParticles(['✨', '👓'], 3);
-    const bossName = isCowMode() ? 'Sếp Bò Sữa' : isFrogMode() ? 'Sếp Ếch Xanh' : 'Sếp Chi';
+    const bossName = isCowMode()
+      ? 'Sếp Bò Sữa'
+      : isFrogMode()
+        ? 'Sếp Ếch Xanh'
+        : isPigMode()
+          ? 'Sếp Heo Hồng'
+          : 'Sếp Chi';
     chiSay(
       settings.glasses
         ? `Đeo kính vào trông ${bossName} tri thức chưa nè! 👓✨`
@@ -3080,7 +3190,7 @@
     inputPomoAudio.value = '';
   });
 
-  const PET_CYCLE = ['chihuahua', 'cow', 'frog'];
+  const PET_CYCLE = ['chihuahua', 'cow', 'frog', 'pig'];
 
   function switchPetTheme(nextPet) {
     const valid = PET_CYCLE.includes(nextPet) ? nextPet : 'chihuahua';
@@ -3101,6 +3211,11 @@
       setChiMood('happy', 2000);
       spawnChiParticles(['🐸', '🪷', '🍵', '💚', '✨'], 7);
       chiSay('Ộp ộp~! Sếp Ếch Xanh & phòng làm việc matcha lá sen có mặt đây! 🐸🪷✨', 4600);
+    } else if (isPigMode()) {
+      playCuteSound('oink');
+      setChiMood('happy', 2000);
+      spawnChiParticles(['🐷', '🍑', '🍓', '💖', '✨'], 7);
+      chiSay('Ủn ỉn~! Sếp Heo Hồng & văn phòng hồng dâu ngọt ngào xuất hiện đây! 🐷🍑✨', 4600);
     } else {
       playRealChihuahuaBarkClip();
       setChiMood('happy', 1800);
@@ -3988,7 +4103,9 @@
         ? 'Ùm bò~! Chào mừng đến bàn làm việc của Sếp Bò Sữa! Nhấp đúp lên bảng để dán note nha 🐮🥛'
         : isFrogMode()
           ? 'Ộp ộp~! Chào mừng đến bàn làm việc matcha của Sếp Ếch Xanh! Nhấp đúp lên bảng để dán note nha 🐸🪷'
-          : 'Gâu gâu! Chào mừng đến bàn làm việc của Sếp Chi! Nhấn đúp lên bảng để dán note nha 📌🐾',
+          : isPigMode()
+            ? 'Ủn ỉn~! Chào mừng đến bàn làm việc hồng dâu của Sếp Heo Hồng! Nhấp đúp lên bảng để dán note nha 🐷🍑'
+            : 'Gâu gâu! Chào mừng đến bàn làm việc của Sếp Chi! Nhấn đúp lên bảng để dán note nha 📌🐾',
       5500
     );
   }, 500);

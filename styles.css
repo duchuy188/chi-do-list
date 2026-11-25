@@ -272,9 +272,130 @@ body.pet-frog .progress-bar-fill {
   background: linear-gradient(90deg, #7CD478, #FFD65A);
 }
 
-/* Show either Chihuahua SVG, Milk Cow SVG, or Matcha Frog SVG cleanly */
+/* ==========================================================================
+   SAKURA PIGGY OFFICE THEME (body.pet-pig) — Dreamy Strawberry & Lined Board!
+   ========================================================================== */
+body.pet-pig {
+  --ink: #5C3B47;
+  --ink-soft: #875F6E;
+  --wall-a: #FFF5F8;
+  --wall-b: #FFEAF0;
+  --wood-frame-1: #FAD0DC;
+  --wood-frame-2: #EBAAC0;
+  --wood-frame-3: #CE849D;
+  --cork-base: #FFF9FB;
+  --cork-dark: #FCEBF1;
+  --desk-top-1: #FDF0ED;
+  --desk-top-2: #F0DCD8;
+  --desk-front-1: #DCBCC3;
+  --desk-front-2: #C09AA4;
+  --mat-bg: #F3E5FF;
+  --mat-border: #D4B5FA;
+  --toolbar-bg: rgba(255, 250, 252, 0.92);
+  --toolbar-border: rgba(232, 152, 178, 0.48);
+  --shadow-warm: rgba(114, 54, 78, 0.16);
+}
+
+body.pet-pig.theme-night {
+  --wall-a: #2D1F33;
+  --wall-b: #241829;
+  --wood-frame-1: #8D5C76;
+  --wood-frame-2: #70455C;
+  --wood-frame-3: #543144;
+  --cork-base: #3F2A45;
+  --cork-dark: #332138;
+  --desk-top-1: #7C5B6E;
+  --desk-top-2: #634657;
+  --desk-front-1: #4D3544;
+  --desk-front-2: #3A2733;
+  --mat-bg: #614673;
+  --mat-border: #9170A8;
+  --toolbar-bg: rgba(45, 31, 51, 0.92);
+  --toolbar-border: rgba(255, 179, 206, 0.32);
+  --shadow-warm: rgba(16, 8, 22, 0.45);
+}
+
+body.pet-pig .corkboard-frame {
+  border-color: #A8647D;
+}
+
+body.pet-pig .frame-bracket {
+  background: radial-gradient(circle at 35% 35%, #FFF4D6, #F2B5C7);
+  border-color: #8A4F66;
+}
+
+/* Soft Strawberry-Cream Lined Stationery Board in Piggy Theme! */
+body.pet-pig .corkboard-surface {
+  background-color: var(--cork-base);
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 29px,
+      rgba(232, 148, 178, 0.22) 29px,
+      rgba(232, 148, 178, 0.22) 30px
+    ),
+    radial-gradient(rgba(238, 142, 176, 0.22) 1.5px, transparent 1.5px);
+  background-size: 100% 30px, 30px 30px;
+  border-color: rgba(226, 140, 170, 0.44);
+  box-shadow: inset 0 4px 12px rgba(140, 68, 96, 0.14);
+}
+
+body.pet-pig.theme-night .corkboard-surface {
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 29px,
+      rgba(255, 176, 206, 0.12) 29px,
+      rgba(255, 176, 206, 0.12) 30px
+    ),
+    radial-gradient(rgba(255, 176, 206, 0.14) 1.5px, transparent 1.5px);
+}
+
+body.pet-pig .desk-surface,
+body.pet-pig .desk-front-edge {
+  border-top-color: #9E687B;
+}
+
+body.pet-pig .desk-drawer-handle {
+  background: linear-gradient(180deg, #FFF5F8, #F4BDD0);
+  border-color: #7D4B5E;
+}
+
+body.pet-pig .desk-nameplate {
+  background: linear-gradient(180deg, #FFF7FA, #FFD8E6);
+  border-color: #5C3B47;
+  box-shadow: 0 4px 0 #C47A94, 0 6px 12px rgba(110, 56, 76, 0.2);
+}
+
+body.pet-pig .nameplate-role {
+  color: #5C3B47;
+}
+
+body.pet-pig .nameplate-sub {
+  color: #9A5570;
+}
+
+body.pet-pig .filter-btn.active {
+  background: #FFDCE8;
+  color: #5C3B47;
+}
+
+body.pet-pig.theme-night .filter-btn.active,
+body.pet-pig.theme-night .filter-btn.active:hover {
+  background: #FFB8D0;
+  color: #3D1F2E;
+}
+
+body.pet-pig .progress-bar-fill {
+  background: linear-gradient(90deg, #FF8FB0, #D1A8FF);
+}
+
+/* Show either Chihuahua SVG, Milk Cow SVG, Matcha Frog SVG, or Sakura Piggy SVG cleanly */
 .cow-svg,
-.frog-svg {
+.frog-svg,
+.pig-svg {
   display: none;
   width: 100%;
   height: auto;
@@ -284,13 +405,19 @@ body.pet-frog .progress-bar-fill {
 
 body.pet-cow .chihuahua-svg,
 body.pet-cow .frog-svg,
+body.pet-cow .pig-svg,
 body.pet-frog .chihuahua-svg,
-body.pet-frog .cow-svg {
+body.pet-frog .cow-svg,
+body.pet-frog .pig-svg,
+body.pet-pig .chihuahua-svg,
+body.pet-pig .cow-svg,
+body.pet-pig .frog-svg {
   display: none;
 }
 
 body.pet-cow .cow-svg,
-body.pet-frog .frog-svg {
+body.pet-frog .frog-svg,
+body.pet-pig .pig-svg {
   display: block;
 }
 
@@ -323,11 +450,11 @@ body.theme-night .pet-quick-switch {
   color: #FFF3E0;
 }
 
-/* Character Theme Cards in Settings Modal (3 bosses: Chihuahua, Cow, Frog!) */
+/* Character Theme Cards in Settings Modal (2x2 clean grid for all 4 bosses!) */
 .pet-theme-choices {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 7px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
 }
 
 .pet-theme-card {
@@ -367,6 +494,12 @@ body.theme-night .pet-quick-switch {
   background: #E4F8DD;
   border-color: #74C76E;
   box-shadow: 0 3px 10px rgba(116, 199, 110, 0.24);
+}
+
+.pet-theme-card[data-pet="pig"].active {
+  background: #FFE5F0;
+  border-color: #F48FB1;
+  box-shadow: 0 3px 10px rgba(244, 143, 177, 0.26);
 }
 
 .pet-theme-emoji {
@@ -3352,7 +3485,8 @@ body.theme-night .lamp-bulb-svg {
 
 .chihuahua-avatar.mood-eat-ready .chihuahua-svg,
 .chihuahua-avatar.mood-eat-ready .cow-svg,
-.chihuahua-avatar.mood-eat-ready .frog-svg {
+.chihuahua-avatar.mood-eat-ready .frog-svg,
+.chihuahua-avatar.mood-eat-ready .pig-svg {
   filter: drop-shadow(0 0 18px rgba(255, 134, 158, 0.65));
 }
 
