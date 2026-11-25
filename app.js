@@ -270,6 +270,8 @@
 
   // Chihuahua & Desk Props
   const chihuahuaEl = document.getElementById('chihuahua');
+  const chihuahuaSvgEl = document.getElementById('chihuahua-svg');
+  const cowSvgEl = document.getElementById('cow-svg');
   const pettingHandEl = document.getElementById('petting-hand');
   const chiSpeechBubble = document.getElementById('chi-speech-bubble');
   const chiSpeechText = document.getElementById('chi-speech-text');
@@ -791,6 +793,8 @@
     document.body.classList.toggle('theme-night', settings.theme === 'night');
     document.body.classList.toggle('theme-day', settings.theme !== 'night');
     document.body.classList.toggle('pet-cow', isCowMode());
+    if (chihuahuaSvgEl) chihuahuaSvgEl.hidden = isCowMode();
+    if (cowSvgEl) cowSvgEl.hidden = !isCowMode();
     btnTheme.textContent = settings.theme === 'night' ? '🌙' : '☀️';
     btnSound.textContent = settings.sound ? '🔊' : '🔇';
     chihuahuaEl.classList.toggle('glasses-hidden', !settings.glasses);

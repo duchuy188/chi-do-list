@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Mali:ital,wght@0,500;0,600;0,700;1,500&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=cow2" />
 </head>
 <body class="theme-day">
   <div class="room-scene" id="room-scene">
@@ -443,7 +443,7 @@
 
           <!-- Interactive Chibi Chihuahua SVG -->
           <button type="button" class="chihuahua-avatar mood-idle" id="chihuahua" aria-label="Vuốt ve chú chó Chihuahua" title="Di chuột hoặc vuốt qua lại trên đầu để xoa đầu Sếp Chi nè! ✋🐾">
-            <svg viewBox="0 0 260 225" class="chihuahua-svg">
+            <svg viewBox="0 0 260 225" class="chihuahua-svg" id="chihuahua-svg">
               <!-- Desk contact shadow -->
               <ellipse cx="130" cy="209" rx="74" ry="10" fill="rgba(74, 48, 30, 0.22)" />
 
@@ -625,7 +625,7 @@
             </svg>
 
             <!-- CHIBI MILK COW SVG (Shown when user switches to Bò Sữa theme!) -->
-            <svg viewBox="0 0 260 225" class="cow-svg" aria-hidden="true">
+            <svg viewBox="0 0 260 225" class="cow-svg" id="cow-svg" aria-hidden="true" hidden>
               <!-- Desk contact shadow -->
               <ellipse cx="130" cy="209" rx="76" ry="10" fill="rgba(54, 68, 92, 0.2)" />
 
@@ -1313,6 +1313,6 @@
     </div>
   </div>
 
-  <script src="app.js"></script>
+  <script src="app.js?v=cow2"></script>
 </body>
 </html>
