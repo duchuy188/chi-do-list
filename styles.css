@@ -163,11 +163,6 @@ body.pet-cow .progress-bar-fill {
 }
 
 /* Show either Chihuahua SVG or Milk Cow SVG cleanly */
-.chihuahua-svg[hidden],
-.cow-svg[hidden] {
-  display: none !important;
-}
-
 .cow-svg {
   display: none;
   width: 100%;

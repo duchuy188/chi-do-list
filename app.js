@@ -793,8 +793,8 @@
     document.body.classList.toggle('theme-night', settings.theme === 'night');
     document.body.classList.toggle('theme-day', settings.theme !== 'night');
     document.body.classList.toggle('pet-cow', isCowMode());
-    if (chihuahuaSvgEl) chihuahuaSvgEl.hidden = isCowMode();
-    if (cowSvgEl) cowSvgEl.hidden = !isCowMode();
+    if (chihuahuaSvgEl) chihuahuaSvgEl.style.display = isCowMode() ? 'none' : 'block';
+    if (cowSvgEl) cowSvgEl.style.display = isCowMode() ? 'block' : 'none';
     btnTheme.textContent = settings.theme === 'night' ? '🌙' : '☀️';
     btnSound.textContent = settings.sound ? '🔊' : '🔇';
     chihuahuaEl.classList.toggle('glasses-hidden', !settings.glasses);
@@ -2628,10 +2628,11 @@
     saveSettings();
     playCuteSound('click');
     spawnChiParticles(['✨', '👓'], 3);
+    const bossName = isCowMode() ? 'Sếp Bò Sữa' : 'Sếp Chi';
     chiSay(
       settings.glasses
-        ? 'Đeo kính vào trông Sếp Chi tri thức chưa nè! 👓✨'
-        : 'Tháo kính ra cho đôi mắt to tròn long lanh nha~ 🥺🐾',
+        ? `Đeo kính vào trông ${bossName} tri thức chưa nè! 👓✨`
+        : `Tháo kính ra cho đôi mắt ${bossName} to tròn long lanh nha~ 🥺✨`,
       3600
     );
   });
