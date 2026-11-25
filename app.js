@@ -66,6 +66,31 @@
     'Gâu gâu! Cố lên đồng nghiệp ơi, mình cổ vũ nè! 🎉🐶',
   ];
 
+  const COW_MOO_LINES = [
+    'Ùm bò~~ Sếp Bò Sữa có mặt trực bàn đây! 🐮🥛',
+    'Moo~! Uống 1 ly sữa tươi rồi chiến tiếp nha đồng nghiệp ơi! 🥛✨',
+    'Ùm bò! Ai vừa bấm chuông cổ Sếp Bò Sữa thế?! 🔔🐮',
+    'Moo~ Cố lên nhé, làm xong việc thưởng ly trà sữa trân châu! 🧋💖',
+  ];
+
+  const COW_HEAD_RUB_LINES = [
+    'Ùm bò~ Xoa giữa 2 cái sừng êm quá đi mất! 🐮💖',
+    'Sướng rơn luôn á~ Sếp Bò Sữa sắp ngủ khò khò rồi nè! 🥰🥛',
+    'Hihi nhột tai quá~ Đồng nghiệp mát tay ghê luôn! 🌸✨',
+  ];
+
+  const COW_EAT_LINES = [
+    'Ngoàm ngoàm~ Tờ note giòn rụm như cỏ non luôn! 🌿😋',
+    'Măm măm! Sếp Bò Sữa nhai sạch tờ note giúp bạn rồi nè! 🐮📄',
+    'Ùm bò~ Bụng mình dọn sạch sẽ tờ note này không còn dấu vết! ✨🥛',
+  ];
+
+  const COW_DONE_LINES = [
+    'Ùm bò!! Giỏi quá trời ơi! Đóng dấu Sếp Bò Sữa duyệt ngay! 🐮🎉',
+    'Xuất sắc luôn! Xong thêm 1 việc rồi, cụng ly sữa tươi nào~ 🥛✨',
+    'Đỉnh quá đồng nghiệp ơi! Bảng trắng gọn gàng hẳn ra! 💙🐮',
+  ];
+
   // Default sample notes so the corkboard looks cozy & lively on first open
   const DEFAULT_NOTES = [
     {
@@ -143,6 +168,7 @@
   let topZ = 10;
   let settings = {
     theme: 'day',
+    pet: 'chihuahua',
     sound: true,
     glasses: true,
     noteAlarmSound: 'bark',
@@ -150,6 +176,16 @@
     noteCustomName: '',
     pomoCustomName: '',
   };
+
+  function isCowMode() {
+    return settings.pet === 'cow';
+  }
+
+  function getDefaultDocTitle() {
+    return isCowMode()
+      ? 'Moo-Do List 🐮 — Bảng Note Văn Phòng Của Bò Sữa'
+      : DEFAULT_DOC_TITLE;
+  }
 
   // Composer state
   let composerState = {
@@ -224,6 +260,12 @@
   const btnTheme = document.getElementById('btn-theme');
   const btnSettings = document.getElementById('btn-settings');
   const btnMobileAddNote = document.getElementById('btn-mobile-add-note');
+  const btnPetSwitch = document.getElementById('btn-pet-switch');
+  const petSwitchLabel = document.getElementById('pet-switch-label');
+  const brandIconEl = document.getElementById('brand-icon');
+  const brandTitleEl = document.getElementById('brand-title');
+  const nameplateRoleEl = document.getElementById('nameplate-role');
+  const nameplateSubEl = document.getElementById('nameplate-sub');
   const filterBtns = document.querySelectorAll('.filter-btn');
 
   // Chihuahua & Desk Props
@@ -294,6 +336,7 @@
   const settingsModalBackdrop = document.getElementById('settings-modal-backdrop');
   const btnCloseSettings = document.getElementById('btn-close-settings');
   const btnDoneSettings = document.getElementById('btn-done-settings');
+  const petThemeCards = document.querySelectorAll('#pet-theme-choices .pet-theme-card');
   const noteSoundChoiceBtns = document.querySelectorAll('#note-sound-choices .sound-choice-btn');
   const pomoSoundChoiceBtns = document.querySelectorAll('#pomo-sound-choices .sound-choice-btn');
   const noteCustomPicker = document.getElementById('note-custom-picker');
@@ -483,6 +526,54 @@
         nGain.gain.exponentialRampToValueAtTime(0.001, now + 0.045);
         noise.connect(nFilter).connect(nGain).connect(audioCtx.destination);
         noise.start(now);
+      } else if (type === 'moo') {
+        // Warm cute cartoon milk cow "Ùm bò~~ (Mooo~)" synthesized vocal sweep + soft cowbell ding!
+        const osc = audioCtx.createOscillator();
+        const osc2 = audioCtx.createOscillator();
+        const filter = audioCtx.createBiquadFilter();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'sawtooth';
+        osc2.type = 'triangle';
+        osc.frequency.setValueAtTime(165, now);
+        osc.frequency.exponentialRampToValueAtTime(225, now + 0.16);
+        osc.frequency.exponentialRampToValueAtTime(182, now + 0.56);
+        osc.frequency.exponentialRampToValueAtTime(145, now + 0.78);
+
+        osc2.frequency.setValueAtTime(82.5, now);
+        osc2.frequency.exponentialRampToValueAtTime(112.5, now + 0.16);
+        osc2.frequency.exponentialRampToValueAtTime(91, now + 0.56);
+        osc2.frequency.exponentialRampToValueAtTime(72.5, now + 0.78);
+
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(420, now);
+        filter.frequency.exponentialRampToValueAtTime(590, now + 0.22);
+        filter.frequency.exponentialRampToValueAtTime(340, now + 0.78);
+        filter.Q.setValueAtTime(2.6, now);
+
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.linearRampToValueAtTime(0.24, now + 0.08);
+        gain.gain.setValueAtTime(0.21, now + 0.45);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.82);
+
+        osc.connect(filter);
+        osc2.connect(filter);
+        filter.connect(gain).connect(audioCtx.destination);
+        osc.start(now);
+        osc2.start(now);
+        osc.stop(now + 0.84);
+        osc2.stop(now + 0.84);
+
+        // Tiny bright cowbell ting right at the start
+        const bell = audioCtx.createOscillator();
+        const bellGain = audioCtx.createGain();
+        bell.type = 'sine';
+        bell.frequency.setValueAtTime(1046.5, now);
+        bellGain.gain.setValueAtTime(0.06, now);
+        bellGain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+        bell.connect(bellGain).connect(audioCtx.destination);
+        bell.start(now);
+        bell.stop(now + 0.19);
       } else if (type === 'bark') {
         // Cute energetic Chihuahua double-bark ("Gâu! Gâu!") synthesized with formant filter + breath puff
         const barks = [
@@ -699,9 +790,28 @@
   function applySettings() {
     document.body.classList.toggle('theme-night', settings.theme === 'night');
     document.body.classList.toggle('theme-day', settings.theme !== 'night');
+    document.body.classList.toggle('pet-cow', isCowMode());
     btnTheme.textContent = settings.theme === 'night' ? '🌙' : '☀️';
     btnSound.textContent = settings.sound ? '🔊' : '🔇';
     chihuahuaEl.classList.toggle('glasses-hidden', !settings.glasses);
+
+    if (isCowMode()) {
+      brandIconEl.textContent = '🐮';
+      brandTitleEl.textContent = 'Moo-Do List';
+      petSwitchLabel.textContent = '🐶 Đổi Chihuahua';
+      nameplateRoleEl.textContent = 'SẾP BÒ SỮA';
+      nameplateSubEl.textContent = '🥛 Chuyên gia nhắc việc';
+    } else {
+      brandIconEl.textContent = '🐾';
+      brandTitleEl.textContent = 'Chi-Do List';
+      petSwitchLabel.textContent = '🐮 Đổi Bò Sữa';
+      nameplateRoleEl.textContent = 'SẾP CHIHUAHUA';
+      nameplateSubEl.textContent = '👓 Chuyên gia nhắc việc';
+    }
+
+    if (!activeAlarmSource && typeof pomoState === 'object' && !pomoState.running) {
+      document.title = getDefaultDocTitle();
+    }
   }
 
   /* ========================================================================
@@ -1196,6 +1306,7 @@
       return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`;
     })();
 
+    const sealTitle = isCowMode() ? '★ SẾP BÒ SỮA ★' : '★ SẾP CHIHUAHUA ★';
     const wrap = document.createElement('div');
     wrap.className = `note-rubber-stamp${animate ? ' stamp-animate' : ''}`;
     wrap.setAttribute('aria-hidden', 'true');
@@ -1210,7 +1321,7 @@
         <circle cx="60" cy="60" r="41" fill="none" stroke="#CC2444" stroke-width="1.3" stroke-dasharray="3.5 2.5" />
         <!-- Curved top & bottom seal text -->
         <text fill="#CC2444" font-family="Quicksand, sans-serif" font-size="8.6" font-weight="700" letter-spacing="1.1">
-          <textPath href="#stamp-top-${safeId}" startOffset="50%" text-anchor="middle">★ SẾP CHIHUAHUA ★</textPath>
+          <textPath href="#stamp-top-${safeId}" startOffset="50%" text-anchor="middle">${sealTitle}</textPath>
         </text>
         <text fill="#CC2444" font-family="Quicksand, sans-serif" font-size="8.2" font-weight="700" letter-spacing="1">
           <textPath href="#stamp-bot-${safeId}" startOffset="50%" text-anchor="middle">DUYỆT • ${stampDate}</textPath>
@@ -1478,8 +1589,8 @@
 
     playCuteSound('chomp');
     setChiMood('chewing', 1650);
-    spawnChiParticles(['😋', '🐾', '✨', '📄', '💖'], 7);
-    chiSay(pickRandom(EAT_LINES), 4200);
+    spawnChiParticles(isCowMode() ? ['😋', '🐮', '🌿', '📄', '💙'] : ['😋', '🐾', '✨', '📄', '💖'], 7);
+    chiSay(pickRandom(isCowMode() ? COW_EAT_LINES : EAT_LINES), 4200);
 
     setTimeout(() => {
       card.remove();
@@ -1888,8 +1999,8 @@
         chiSay(pickRandom(ALL_DONE_LINES), 5200);
       } else {
         setChiMood('happy', 2000);
-        spawnChiParticles(['✨', '💖', '🐾', '🦴'], 6);
-        chiSay(pickRandom(DONE_LINES), 4200);
+        spawnChiParticles(isCowMode() ? ['✨', '🥛', '🐮', '💙'] : ['✨', '💖', '🐾', '🦴'], 6);
+        chiSay(pickRandom(isCowMode() ? COW_DONE_LINES : DONE_LINES), 4200);
       }
     } else {
       playCuteSound('pin');
@@ -2403,7 +2514,7 @@
         }
 
         if (rubSayAccum > sayThresh) {
-          chiSay(pickRandom(HEAD_RUB_LINES), 3800);
+          chiSay(pickRandom(isCowMode() ? COW_HEAD_RUB_LINES : HEAD_RUB_LINES), 3800);
           rubSayAccum = 0;
         }
       }
@@ -2476,26 +2587,34 @@
     }
   });
 
-  // Click/tap Chihuahua -> Sủa "Gâu! Gâu!" bằng đoạn đầu video Chihuahua thật!
+  // Click/tap Character -> Chihuahua sủa thật | Bò Sữa kêu "Ùm bò~~"!
   chihuahuaEl.addEventListener('click', () => {
-    // Only skip bark if user was dragging a finger to rub on touchscreen
+    // Only skip sound if user was dragging a finger to rub on touchscreen
     if (touchDragDist > 16) {
       touchDragDist = 0;
       return;
     }
     clearTimeout(petIdleTimer);
-    playRealChihuahuaBarkClip();
 
-    // Restart bark CSS animation cleanly even on rapid repeated clicks
     chihuahuaEl.classList.remove('mood-bark');
     void chihuahuaEl.offsetWidth;
-    setChiMood('bark', 1050);
 
-    spawnBarkPop('Gâu!', 66, 48, 22, 10, 0);
-    spawnBarkPop('Gâu!', 16, 44, -24, -10, 260);
-    spawnBarkPop('Gâu!', 68, 36, 20, 8, 560);
-    spawnChiParticles(['🐾', '✨'], 3);
-    chiSay(pickRandom(BARK_LINES), 3800);
+    if (isCowMode()) {
+      playCuteSound('moo');
+      setChiMood('bark', 900);
+      spawnBarkPop('Ùm bò~', 64, 46, 22, 10, 0);
+      spawnBarkPop('Moo!', 16, 42, -24, -10, 260);
+      spawnChiParticles(['🐮', '🥛', '✨'], 4);
+      chiSay(pickRandom(COW_MOO_LINES), 3800);
+    } else {
+      playRealChihuahuaBarkClip();
+      setChiMood('bark', 1050);
+      spawnBarkPop('Gâu!', 66, 48, 22, 10, 0);
+      spawnBarkPop('Gâu!', 16, 44, -24, -10, 260);
+      spawnBarkPop('Gâu!', 68, 36, 20, 8, 560);
+      spawnChiParticles(['🐾', '✨'], 3);
+      chiSay(pickRandom(BARK_LINES), 3800);
+    }
   });
 
   // Click nameplate to toggle cute office glasses!
@@ -2737,8 +2856,13 @@
   previewAudio.addEventListener('ended', stopSoundPreview);
 
   function renderSettingsUI() {
+    const activePet = settings.pet || 'chihuahua';
     const noteMode = settings.noteAlarmSound || 'bark';
     const pomoMode = settings.pomoAlarmSound || 'bark';
+
+    petThemeCards.forEach((c) => {
+      c.classList.toggle('active', c.dataset.pet === activePet);
+    });
 
     noteSoundChoiceBtns.forEach((b) => {
       b.classList.toggle('active', b.dataset.sound === noteMode);
@@ -2831,6 +2955,37 @@
     renderSettingsUI();
     playCuteSound('pin');
     inputPomoAudio.value = '';
+  });
+
+  function switchPetTheme(nextPet) {
+    if (settings.pet === nextPet) return;
+    settings.pet = nextPet === 'cow' ? 'cow' : 'chihuahua';
+    applySettings();
+    saveSettings();
+    renderSettingsUI();
+    renderNotes(); // Refresh rubber stamp text on completed notes!
+
+    if (isCowMode()) {
+      playCuteSound('moo');
+      setChiMood('happy', 2000);
+      spawnChiParticles(['🐮', '🥛', '💙', '✨'], 7);
+      chiSay('Ùm bò~! Sếp Bò Sữa & phòng làm việc xanh sữa tươi lên sóng đây! 🐮🥛✨', 4600);
+    } else {
+      playRealChihuahuaBarkClip();
+      setChiMood('happy', 1800);
+      spawnChiParticles(['🐶', '🐾', '✨', '💛'], 6);
+      chiSay('Gâu gâu! Sếp Chihuahua & phòng gỗ ấm áp quay trở lại rồi nè! 🐶🐾', 4200);
+    }
+  }
+
+  btnPetSwitch.addEventListener('click', () => {
+    switchPetTheme(isCowMode() ? 'chihuahua' : 'cow');
+  });
+
+  petThemeCards.forEach((card) => {
+    card.addEventListener('click', () => {
+      switchPetTheme(card.dataset.pet);
+    });
   });
 
   btnPreviewNoteSound.addEventListener('click', () => toggleSoundPreview('note'));
@@ -3695,6 +3850,11 @@
 
   // Warm greeting on arrival
   setTimeout(() => {
-    chiSay('Gâu gâu! Chào mừng đến bàn làm việc của Sếp Chi! Nhấn đúp lên bảng để dán note nha 📌🐾', 5500);
+    chiSay(
+      isCowMode()
+        ? 'Ùm bò~! Chào mừng đến bàn làm việc của Sếp Bò Sữa! Nhấp đúp lên bảng để dán note nha 🐮🥛'
+        : 'Gâu gâu! Chào mừng đến bàn làm việc của Sếp Chi! Nhấn đúp lên bảng để dán note nha 📌🐾',
+      5500
+    );
   }, 500);
 })();

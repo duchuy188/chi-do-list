@@ -53,6 +53,216 @@ body.theme-night {
   --shadow-warm: rgba(15, 10, 28, 0.38);
 }
 
+/* ==========================================================================
+   MILK COW OFFICE THEME (body.pet-cow) — Fresh Pastel Sky-Milk & White Pegboard!
+   ========================================================================== */
+body.pet-cow {
+  --ink: #3E394B;
+  --ink-soft: #635E73;
+  --wall-a: #F4F9FF;
+  --wall-b: #E7F2FF;
+  --wood-frame-1: #FFFFFF;
+  --wood-frame-2: #E4EEF8;
+  --wood-frame-3: #C3D5E8;
+  --cork-base: #F2F9F6;
+  --cork-dark: #DCEEE6;
+  --desk-top-1: #FFF9F2;
+  --desk-top-2: #F0E6DA;
+  --desk-front-1: #D9C9B8;
+  --desk-front-2: #BEA995;
+  --mat-bg: #DCEFFF;
+  --mat-border: #A8D4FA;
+  --toolbar-bg: rgba(255, 255, 255, 0.9);
+  --toolbar-border: rgba(130, 176, 224, 0.45);
+  --shadow-warm: rgba(58, 84, 120, 0.16);
+}
+
+body.pet-cow.theme-night {
+  --wall-a: #1D263E;
+  --wall-b: #182035;
+  --wood-frame-1: #5E7499;
+  --wood-frame-2: #465B7D;
+  --wood-frame-3: #31425E;
+  --cork-base: #2D3D57;
+  --cork-dark: #25334A;
+  --desk-top-1: #647691;
+  --desk-top-2: #4E5E78;
+  --desk-front-1: #3C4B63;
+  --desk-front-2: #2C384C;
+  --mat-bg: #4A6485;
+  --mat-border: #6D8EB5;
+  --toolbar-bg: rgba(29, 38, 62, 0.9);
+  --toolbar-border: rgba(154, 198, 255, 0.3);
+  --shadow-warm: rgba(8, 12, 26, 0.44);
+}
+
+/* Crisp White Scandinavian Pegboard texture in Cow Theme! */
+body.pet-cow .corkboard-frame {
+  border-color: #8BA6C4;
+}
+
+body.pet-cow .frame-bracket {
+  background: radial-gradient(circle at 35% 35%, #FFFFFF, #B8D4F0);
+  border-color: #6B86A6;
+}
+
+body.pet-cow .corkboard-surface {
+  background-color: var(--cork-base);
+  background-image:
+    radial-gradient(rgba(116, 152, 184, 0.34) 2.2px, transparent 2.2px),
+    linear-gradient(180deg, rgba(116, 152, 184, 0.08) 0%, transparent 14%, transparent 86%, rgba(116, 152, 184, 0.12) 100%);
+  background-size: 26px 26px, 100% 100%;
+  background-position: 8px 8px, 0 0;
+  border-color: rgba(124, 160, 196, 0.38);
+  box-shadow: inset 0 4px 12px rgba(72, 102, 138, 0.16);
+}
+
+body.pet-cow.theme-night .corkboard-surface {
+  background-image:
+    radial-gradient(rgba(182, 214, 255, 0.24) 2.2px, transparent 2.2px),
+    linear-gradient(180deg, rgba(12, 18, 34, 0.2) 0%, transparent 14%, transparent 86%, rgba(12, 18, 34, 0.26) 100%);
+}
+
+body.pet-cow .desk-surface,
+body.pet-cow .desk-front-edge {
+  border-top-color: #6E85A1;
+}
+
+body.pet-cow .desk-drawer-handle {
+  background: linear-gradient(180deg, #FFFFFF, #CFE4FA);
+  border-color: #5A708C;
+}
+
+body.pet-cow .desk-nameplate {
+  background: linear-gradient(180deg, #FFFFFF, #DCEEFF);
+  border-color: #433A4A;
+  box-shadow: 0 4px 0 #82A7CC, 0 6px 12px rgba(54, 76, 110, 0.2);
+}
+
+body.pet-cow .nameplate-role {
+  color: #3E394B;
+}
+
+body.pet-cow .nameplate-sub {
+  color: #5C7799;
+}
+
+body.pet-cow .filter-btn.active {
+  background: #D6ECFF;
+  color: #354761;
+}
+
+body.pet-cow.theme-night .filter-btn.active,
+body.pet-cow.theme-night .filter-btn.active:hover {
+  background: #A9D6FF;
+  color: #21324A;
+}
+
+body.pet-cow .progress-bar-fill {
+  background: linear-gradient(90deg, #7CC2FF, #FF9EB5);
+}
+
+/* Show either Chihuahua SVG or Milk Cow SVG cleanly */
+.cow-svg {
+  display: none;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 6px 10px rgba(54, 74, 108, 0.16));
+}
+
+body.pet-cow .chihuahua-svg {
+  display: none;
+}
+
+body.pet-cow .cow-svg {
+  display: block;
+}
+
+/* Quick Pet Switch Pill on Top Toolbar */
+.pet-quick-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 2px solid var(--toolbar-border);
+  background: var(--toolbar-bg);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px var(--shadow-warm);
+  backdrop-filter: blur(8px);
+  transition: transform 0.16s ease, border-color 0.18s ease;
+  white-space: nowrap;
+}
+
+.pet-quick-switch:hover {
+  transform: translateY(-2px);
+  border-color: #FF8DA8;
+}
+
+body.theme-night .pet-quick-switch {
+  color: #FFF3E0;
+}
+
+/* Character Theme Cards in Settings Modal */
+.pet-theme-choices {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.pet-theme-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 3px;
+  padding: 10px 8px;
+  border-radius: 14px;
+  border: 2px solid #E5CEB8;
+  background: #FFFDF9;
+  color: #5A3E32;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+
+.pet-theme-card:hover {
+  transform: translateY(-1px);
+  border-color: #FF9EB5;
+}
+
+.pet-theme-card.active {
+  background: #FFE5EE;
+  border-color: #FF7C8F;
+  box-shadow: 0 3px 10px rgba(238, 93, 117, 0.18);
+}
+
+.pet-theme-card[data-pet="cow"].active {
+  background: #E2F2FF;
+  border-color: #6DB8FA;
+  box-shadow: 0 3px 10px rgba(92, 174, 248, 0.22);
+}
+
+.pet-theme-emoji {
+  font-size: 1.55rem;
+  line-height: 1.1;
+}
+
+.pet-theme-card strong {
+  font-size: 0.84rem;
+}
+
+.pet-theme-card span {
+  font-size: 0.69rem;
+  font-weight: 600;
+  color: #84604C;
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -3019,7 +3229,8 @@ body.theme-night .lamp-bulb-svg {
   transition: transform 0.2s ease;
 }
 
-.chihuahua-avatar.mood-eat-ready .chihuahua-svg {
+.chihuahua-avatar.mood-eat-ready .chihuahua-svg,
+.chihuahua-avatar.mood-eat-ready .cow-svg {
   filter: drop-shadow(0 0 18px rgba(255, 134, 158, 0.65));
 }
 
@@ -3727,9 +3938,14 @@ body.theme-night .lamp-bulb-svg {
   }
 
   .brand-badge {
-    padding: 5px 11px;
+    padding: 5px 10px;
     gap: 5px;
     white-space: nowrap;
+  }
+
+  .pet-quick-switch {
+    padding: 5px 9px;
+    font-size: 0.72rem;
   }
 
   .brand-title {

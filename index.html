@@ -22,9 +22,12 @@
     <header class="wall-toolbar">
       <div class="brand-group">
         <div class="brand-badge">
-          <span class="brand-paw">🐾</span>
-          <span class="brand-title">Chi-Do List</span>
+          <span class="brand-paw" id="brand-icon">🐾</span>
+          <span class="brand-title" id="brand-title">Chi-Do List</span>
         </div>
+        <button type="button" class="pet-quick-switch" id="btn-pet-switch" title="Đổi nhanh giữa Sếp Chihuahua 🐶 và Sếp Bò Sữa 🐮">
+          <span id="pet-switch-label">🐮 Đổi Bò Sữa</span>
+        </button>
         <div class="progress-pill" id="progress-pill" title="Tiến độ công việc hôm nay">
           <span class="progress-bar-track">
             <span class="progress-bar-fill" id="progress-bar-fill"></span>
@@ -620,12 +623,171 @@
                 <line x1="170" y1="201" x2="170" y2="208" stroke="#5A3E32" stroke-width="2" stroke-linecap="round" />
               </g>
             </svg>
+
+            <!-- CHIBI MILK COW SVG (Shown when user switches to Bò Sữa theme!) -->
+            <svg viewBox="0 0 260 225" class="cow-svg" aria-hidden="true">
+              <!-- Desk contact shadow -->
+              <ellipse cx="130" cy="209" rx="76" ry="10" fill="rgba(54, 68, 92, 0.2)" />
+
+              <!-- Cute Tufted Milk Cow Tail -->
+              <g class="chi-tail">
+                <path d="M 178 176 Q 214 170 216 144" fill="none" stroke="#433A4A" stroke-width="4.5" stroke-linecap="round" />
+                <path d="M 178 176 Q 214 170 216 144" fill="none" stroke="#FFFDF9" stroke-width="2" stroke-linecap="round" />
+                <path d="M 216 144 Q 209 130 220 124 Q 231 132 216 144 Z" fill="#463E4D" stroke="#433A4A" stroke-width="2.6" stroke-linejoin="round" />
+              </g>
+
+              <!-- Chibi Cow Body sitting at desk -->
+              <path d="M 78 142 Q 70 178 76 202 Q 130 212 184 202 Q 190 178 182 142 Z"
+                    fill="#FFFDF9" stroke="#433A4A" stroke-width="3.4" stroke-linejoin="round" />
+              <!-- Cute Cow Spots on Body -->
+              <path d="M 80 162 Q 98 158 96 178 Q 88 188 76 184 Z" fill="#4B4354" />
+              <ellipse cx="168" cy="184" rx="13" ry="11" fill="#4B4354" />
+
+              <!-- Crisp Office Collar, Pastel Sky-Blue Bow Tie & Golden Cowbell! -->
+              <g class="chi-office-tie">
+                <polygon points="103,146 130,159 111,167" fill="#FFFFFF" stroke="#433A4A" stroke-width="2.4" stroke-linejoin="round" />
+                <polygon points="157,146 130,159 149,167" fill="#FFFFFF" stroke="#433A4A" stroke-width="2.4" stroke-linejoin="round" />
+                <!-- Pastel Sky-Blue Bow Tie -->
+                <polygon points="128,160 112,152 112,168" fill="#82C4FF" stroke="#433A4A" stroke-width="2.2" stroke-linejoin="round" />
+                <polygon points="132,160 148,152 148,168" fill="#82C4FF" stroke="#433A4A" stroke-width="2.2" stroke-linejoin="round" />
+                <circle cx="130" cy="160" r="5" fill="#5CAEF8" stroke="#433A4A" stroke-width="2.2" />
+                <!-- Cute Golden Cowbell -->
+                <circle cx="130" cy="174" r="7.5" fill="#FFE074" stroke="#433A4A" stroke-width="2.2" />
+                <line x1="125" y1="175" x2="135" y2="175" stroke="#433A4A" stroke-width="1.8" stroke-linecap="round" />
+                <circle cx="130" cy="177.5" r="1.8" fill="#433A4A" />
+              </g>
+
+              <!-- MILK COW HEAD GROUP -->
+              <g class="chi-head-group">
+                <!-- Cute Floppy Cow Left Ear -->
+                <g class="chi-ear-left">
+                  <path d="M 76 80 Q 34 62 28 84 Q 28 106 72 104 Z"
+                        fill="#FFFDF9" stroke="#433A4A" stroke-width="3.4" stroke-linejoin="round" />
+                  <path d="M 68 85 Q 42 75 39 87 Q 40 97 66 96 Z" fill="#FFB8CB" />
+                </g>
+
+                <!-- Cute Floppy Cow Right Ear -->
+                <g class="chi-ear-right">
+                  <path d="M 184 80 Q 226 62 232 84 Q 232 106 188 104 Z"
+                        fill="#4B4354" stroke="#433A4A" stroke-width="3.4" stroke-linejoin="round" />
+                  <path d="M 192 85 Q 218 75 221 87 Q 220 97 194 96 Z" fill="#FFB8CB" />
+                </g>
+
+                <!-- Two Adorable Butter-Yellow Little Cow Horns -->
+                <path d="M 88 54 Q 78 30 94 28 Q 103 34 104 49 Z"
+                      fill="#FFE296" stroke="#433A4A" stroke-width="3" stroke-linejoin="round" />
+                <path d="M 172 54 Q 182 30 166 28 Q 157 34 156 49 Z"
+                      fill="#FFE296" stroke="#433A4A" stroke-width="3" stroke-linejoin="round" />
+
+                <!-- Round Chibi Milk Cow Head -->
+                <path d="M 66 104 C 64 60, 92 44, 130 44 C 168 44, 196 60, 194 104 C 196 136, 168 156, 130 156 C 92 156, 64 136, 66 104 Z"
+                      fill="#FFFDF9" stroke="#433A4A" stroke-width="3.4" />
+
+                <!-- Iconic Cute Cow Spots on Head -->
+                <path d="M 74 72 C 88 54, 114 52, 116 74 C 118 90, 98 96, 82 94 C 70 92, 68 82, 74 72 Z"
+                      fill="#4B4354" />
+                <ellipse cx="176" cy="84" rx="14" ry="18" transform="rotate(-12 176 84)" fill="#4B4354" />
+
+                <!-- Cute Forehead Hair Tuft -->
+                <path d="M 122 45 Q 128 34 134 44 Q 140 36 142 46"
+                      fill="#FFFDF9" stroke="#433A4A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
+
+                <!-- Cute Pastel Over-Ear Headphones (Shown when music plays!) -->
+                <g class="chi-headphones">
+                  <path d="M 64 96 C 64 32, 196 32, 196 96" fill="none" stroke="#433A4A" stroke-width="9.5" stroke-linecap="round" />
+                  <path d="M 64 96 C 64 32, 196 32, 196 96" fill="none" stroke="#85C7FF" stroke-width="4.8" stroke-linecap="round" />
+                  <path d="M 104 40 Q 130 34 156 40" fill="none" stroke="#D4ECFF" stroke-width="2.4" stroke-linecap="round" />
+                  <rect x="51" y="84" width="18" height="32" rx="9" fill="#7CC2FF" stroke="#433A4A" stroke-width="2.8" />
+                  <rect x="63" y="88" width="7" height="24" rx="3.5" fill="#FFFDF9" stroke="#433A4A" stroke-width="2" />
+                  <rect x="191" y="84" width="18" height="32" rx="9" fill="#7CC2FF" stroke="#433A4A" stroke-width="2.8" />
+                  <rect x="190" y="88" width="7" height="24" rx="3.5" fill="#FFFDF9" stroke="#433A4A" stroke-width="2" />
+                </g>
+
+                <!-- NORMAL EXPRESSIVE BIG EYES -->
+                <g class="chi-eyes-normal">
+                  <g class="chi-eye-left">
+                    <ellipse cx="97" cy="96" rx="12.5" ry="13.5" fill="#322838" />
+                    <g class="chi-pupil" data-eye="left">
+                      <circle cx="93" cy="91" r="4.6" fill="#FFFFFF" />
+                      <circle cx="101.5" cy="100.5" r="2.1" fill="#FFFFFF" opacity="0.9" />
+                    </g>
+                  </g>
+                  <g class="chi-eye-right">
+                    <ellipse cx="163" cy="96" rx="12.5" ry="13.5" fill="#322838" />
+                    <g class="chi-pupil" data-eye="right">
+                      <circle cx="159" cy="91" r="4.6" fill="#FFFFFF" />
+                      <circle cx="167.5" cy="100.5" r="2.1" fill="#FFFFFF" opacity="0.9" />
+                    </g>
+                  </g>
+                  <ellipse class="chi-eyelid" cx="97" cy="96" rx="13.5" ry="14.5" fill="#FFFDF9" />
+                  <ellipse class="chi-eyelid" cx="163" cy="96" rx="13.5" ry="14.5" fill="#FFFDF9" />
+                </g>
+
+                <!-- HAPPY SQUINT EYES (^ ^) -->
+                <g class="chi-eyes-happy">
+                  <path d="M 85 98 Q 97 85 109 98" fill="none" stroke="#322838" stroke-width="3.8" stroke-linecap="round" />
+                  <path d="M 151 98 Q 163 85 175 98" fill="none" stroke="#322838" stroke-width="3.8" stroke-linecap="round" />
+                </g>
+
+                <!-- Cute Optional Round Office Glasses -->
+                <g class="chi-glasses">
+                  <circle cx="97" cy="97" r="18" fill="rgba(255,255,255,0.2)" stroke="#5A7EA6" stroke-width="2.6" />
+                  <circle cx="163" cy="97" r="18" fill="rgba(255,255,255,0.2)" stroke="#5A7EA6" stroke-width="2.6" />
+                  <path d="M 115 96 Q 130 91 145 96" fill="none" stroke="#5A7EA6" stroke-width="2.6" stroke-linecap="round" />
+                  <line x1="72" y1="94" x2="79" y2="96" stroke="#5A7EA6" stroke-width="2.4" stroke-linecap="round" />
+                  <line x1="181" y1="96" x2="188" y2="94" stroke="#5A7EA6" stroke-width="2.4" stroke-linecap="round" />
+                </g>
+
+                <!-- Signature Plump Strawberry-Pink Cow Snout! -->
+                <ellipse cx="130" cy="131" rx="45" ry="24" fill="#FFD3DF" stroke="#433A4A" stroke-width="3" />
+                <ellipse cx="114" cy="123" rx="5.2" ry="3.4" transform="rotate(-14 114 123)" fill="#9E5B6E" />
+                <ellipse cx="146" cy="123" rx="5.2" ry="3.4" transform="rotate(14 146 123)" fill="#9E5B6E" />
+
+                <!-- Rosy Blush on Cheeks -->
+                <ellipse class="chi-blush" cx="79" cy="116" rx="9" ry="5" fill="#FF8FA8" opacity="0.58" />
+                <ellipse class="chi-blush" cx="181" cy="116" rx="9" ry="5" fill="#FF8FA8" opacity="0.58" />
+
+                <!-- Normal Smiling Cow Mouth -->
+                <g class="chi-mouth-normal">
+                  <path d="M 119 136 Q 130 144 141 136" fill="none" stroke="#433A4A" stroke-width="2.6" stroke-linecap="round" />
+                  <path class="chi-tongue" d="M 125 139 Q 130 149 135 139 Z" fill="#FF7F9A" stroke="#433A4A" stroke-width="1.9" stroke-linejoin="round" />
+                </g>
+
+                <!-- Wide Open Mouth (Eating a Sticky Note or Mooing!) -->
+                <g class="chi-mouth-open">
+                  <ellipse cx="130" cy="140" rx="18" ry="13.5" fill="#7D2E3A" stroke="#433A4A" stroke-width="2.6" />
+                  <path d="M 118 145 Q 130 136 142 145 Q 136 152 130 152 Q 124 152 118 145 Z"
+                        fill="#FF8AA1" stroke="#433A4A" stroke-width="1.5" />
+                </g>
+
+                <!-- Chewing Mouth -->
+                <g class="chi-mouth-chew">
+                  <path d="M 120 138 Q 125 133 130 138 Q 135 133 140 138 Q 135 145 130 143 Q 125 145 120 138 Z"
+                        fill="#FF8AA1" stroke="#433A4A" stroke-width="2.3" stroke-linejoin="round" />
+                </g>
+              </g>
+
+              <!-- Cute Little Cow Hooves Resting on the Desk Edge -->
+              <g class="chi-paws">
+                <ellipse cx="94" cy="199" rx="16" ry="11" fill="#4B4354" stroke="#433A4A" stroke-width="3" />
+                <line x1="94" y1="199" x2="94" y2="209" stroke="#FFFDF9" stroke-width="2" stroke-linecap="round" opacity="0.65" />
+                <!-- Right hoof holding a pastel blue office pencil! -->
+                <g transform="rotate(-22 178 190)">
+                  <rect x="166" y="168" width="8" height="36" rx="2.5" fill="#8FD3FF" stroke="#433A4A" stroke-width="2" />
+                  <polygon points="166,168 174,168 170,158" fill="#FFE8D1" stroke="#433A4A" stroke-width="2" stroke-linejoin="round" />
+                  <polygon points="168.5,161.5 171.5,161.5 170,158" fill="#433A4A" />
+                  <rect x="166" y="200" width="8" height="6" rx="1.5" fill="#FFB3C6" stroke="#433A4A" stroke-width="2" />
+                </g>
+                <ellipse cx="166" cy="199" rx="16" ry="11" fill="#4B4354" stroke="#433A4A" stroke-width="3" />
+                <line x1="166" y1="199" x2="166" y2="209" stroke="#FFFDF9" stroke-width="2" stroke-linecap="round" opacity="0.65" />
+              </g>
+            </svg>
           </button>
 
           <!-- Cute Office Desk Nameplate (Click to toggle glasses!) -->
-          <button type="button" class="desk-nameplate" id="desk-nameplate" title="Nhấn để đeo / tháo kính cho Sếp Chi 👓">
-            <span class="nameplate-role">SẾP CHIHUAHUA</span>
-            <span class="nameplate-sub">👓 Chuyên gia nhắc việc</span>
+          <button type="button" class="desk-nameplate" id="desk-nameplate" title="Nhấn để đeo / tháo kính 👓">
+            <span class="nameplate-role" id="nameplate-role">SẾP CHIHUAHUA</span>
+            <span class="nameplate-sub" id="nameplate-sub">👓 Chuyên gia nhắc việc</span>
           </button>
         </div>
 
@@ -1080,11 +1242,30 @@
   <div class="modal-backdrop" id="settings-modal-backdrop" hidden>
     <div class="note-modal settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title">
       <div class="modal-header">
-        <h2 id="settings-modal-title">⚙️ Cài Đặt Chuông Báo</h2>
+        <h2 id="settings-modal-title">⚙️ Cài Đặt Giao Diện &amp; Chuông</h2>
         <button type="button" class="modal-close" id="btn-close-settings" aria-label="Đóng cài đặt">✕</button>
       </div>
 
       <div class="settings-body">
+        <!-- Setting 0: Pet Character & Room Theme Switcher! -->
+        <div class="setting-group">
+          <div class="setting-group-head">
+            <span class="setting-group-title">✨ Chọn Sếp &amp; Phong Cách Văn Phòng</span>
+          </div>
+          <div class="pet-theme-choices" id="pet-theme-choices">
+            <button type="button" class="pet-theme-card active" data-pet="chihuahua">
+              <span class="pet-theme-emoji">🐶</span>
+              <strong>Sếp Chihuahua</strong>
+              <span>Phòng gỗ ấm • Bảng ghim bần</span>
+            </button>
+            <button type="button" class="pet-theme-card" data-pet="cow">
+              <span class="pet-theme-emoji">🐮</span>
+              <strong>Sếp Bò Sữa</strong>
+              <span>Phòng xanh sữa • Bảng lỗ trắng</span>
+            </button>
+          </div>
+        </div>
+
         <!-- Setting 1: Note Reminder Alarm Sound -->
         <div class="setting-group" data-alarm-target="note">
           <div class="setting-group-head">
