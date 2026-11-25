@@ -481,59 +481,106 @@ body.theme-night .fairy-bulb .bulb-halo {
   display: none;
 }
 
-/* User Guide Modal Styling */
+/* Compact Illustrated Visual Guide Modal (Zero wall of text!) */
 .guide-modal {
-  max-width: 520px;
+  max-width: 440px;
 }
 
-.guide-sections {
+.guide-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.guide-tab {
+  padding: 7px 6px;
+  border-radius: 12px;
+  border: 2px solid #E5CEB8;
+  background: #FFF7EC;
+  color: #6B4A38;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+
+.guide-tab.active {
+  background: #FFE2EC;
+  border-color: #FF8DA8;
+  color: #B93558;
+}
+
+.guide-panel {
+  display: none;
+}
+
+.guide-panel.active {
+  display: block;
+}
+
+.guide-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.guide-tile {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.guide-card {
-  padding: 11px 13px;
-  border-radius: 15px;
+  align-items: center;
+  text-align: center;
+  padding: 10px 8px 11px;
+  border-radius: 16px;
   background: #FFF6EA;
   border: 1.8px solid #EBD3BC;
+  gap: 4px;
 }
 
-.guide-card h3 {
-  margin: 0 0 6px;
-  font-size: 0.92rem;
-  color: #5A3E32;
+.guide-illus {
+  width: 82px;
+  height: 58px;
+  margin-bottom: 2px;
 }
 
-.guide-card ul {
-  margin: 0;
-  padding-left: 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+.guide-illus svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
 }
 
-.guide-card li {
-  font-size: 0.81rem;
-  font-weight: 600;
-  line-height: 1.42;
-  color: #6B4A38;
-}
-
-.guide-card li strong {
+.guide-tile strong {
+  font-size: 0.83rem;
   color: #4D3327;
+  line-height: 1.2;
 }
 
-.guide-save-tip {
-  padding: 9px 12px;
-  border-radius: 12px;
-  background: #FFF0F3;
-  border: 1.6px dashed #EE889B;
-  font-size: 0.78rem;
+.guide-tile span {
+  font-size: 0.72rem;
   font-weight: 600;
-  line-height: 1.4;
-  color: #8A3A4B;
+  color: #84604C;
+  line-height: 1.3;
+}
+
+.guide-bottom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.guide-save-mini {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #8E6A56;
+  background: #FFF3E4;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1.5px dashed #DFC2A4;
 }
 
 .decor-tape {

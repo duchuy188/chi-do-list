@@ -239,6 +239,8 @@
   const guideModalBackdrop = document.getElementById('guide-modal-backdrop');
   const btnCloseGuideModal = document.getElementById('btn-close-guide-modal');
   const btnOkGuide = document.getElementById('btn-ok-guide');
+  const guideTabs = document.querySelectorAll('.guide-tab');
+  const guidePanels = document.querySelectorAll('.guide-panel');
 
   // Tomato Pomodoro Timer Elements
   const pomoWrap = document.getElementById('pomodoro-desk-wrap');
@@ -2386,6 +2388,21 @@
   });
   guideModalBackdrop.addEventListener('click', (e) => {
     if (e.target === guideModalBackdrop) closeGuideModal();
+  });
+
+  guideTabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.gtab;
+      guideTabs.forEach((t) => {
+        const isAct = t === tab;
+        t.classList.toggle('active', isAct);
+        t.setAttribute('aria-selected', String(isAct));
+      });
+      guidePanels.forEach((panel) => {
+        panel.classList.toggle('active', panel.dataset.gpanel === target);
+      });
+      playCuteSound('click');
+    });
   });
 
   /* ========================================================================
